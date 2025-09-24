@@ -1,0 +1,35 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 3">
+<g id="Group 2">
+<g id="Rectangle 1">
+<rect x="0.5" y="0.5" width="99" height="99" rx="9.5" fill="#C1E8FF"/>
+<rect x="0.5" y="0.5" width="99" height="99" rx="9.5" fill="#7DA0CA" fill-opacity="0.2"/>
+<rect x="0.5" y="0.5" width="99" height="99" rx="9.5" fill="#97CADB" fill-opacity="0.35"/>
+<rect x="0.5" y="0.5" width="99" height="99" rx="9.5" stroke="black"/>
+</g>
+<g id="Group 1">
+<line id="Line 1" x1="59.0915" y1="28.7119" x2="66.2915" y2="27.1119" stroke="black"/>
+<line id="Line 2" x1="66.3089" y1="27.2069" x2="71.9089" y2="31.6069" stroke="black"/>
+<line id="Line 4" x1="71.9" y1="31.6" x2="78.3" y2="36.4" stroke="black"/>
+<line id="Line 5" x1="71.538" y1="37.1039" x2="77.938" y2="36.3039" stroke="black"/>
+<line id="Line 6" x1="71.8012" y1="37.6578" x2="45.4012" y2="49.2578" stroke="black"/>
+<line id="Line 7" x1="68.0776" y1="38.9482" x2="64.4776" y2="50.5482" stroke="black"/>
+<line id="Line 8" x1="64.711" y1="50.3916" x2="51.111" y2="61.1916" stroke="black"/>
+<line id="Line 9" x1="51.2761" y1="60.9531" x2="47.6761" y2="72.1531" stroke="black"/>
+<line id="Line 10" x1="47.6707" y1="72.095" x2="36.4707" y2="73.695" stroke="black"/>
+<line id="Line 11" x1="36.3302" y1="73.7709" x2="31.5302" y2="60.5709" stroke="black"/>
+<line id="Line 12" x1="31.837" y1="60.3274" x2="43.437" y2="56.3274" stroke="black"/>
+<line id="Line 13" x1="45.6968" y1="46.7976" x2="22.0968" y2="28.7976" stroke="black"/>
+<line id="Line 14" x1="22.3331" y1="28.3046" x2="37.1331" y2="26.3046" stroke="black"/>
+<line id="Line 15" x1="37.1875" y1="26.084" x2="49.5875" y2="41.284" stroke="black"/>
+<line id="Line 16" x1="43.1128" y1="56.6876" x2="45.5128" y2="46.2876" stroke="black"/>
+<line id="Line 17" x1="48.9133" y1="41.1904" x2="56.9133" y2="35.5904" stroke="black"/>
+<line id="Line 18" x1="59.6692" y1="28.9729" x2="56.8692" y2="36.5729" stroke="black"/>
+<line id="Line 19" x1="37.6816" y1="26.2656" x2="42.4816" y2="43.4656" stroke="black"/>
+<line id="Line 20" x1="36.3806" y1="72.9279" x2="45.9806" y2="58.1279" stroke="black"/>
+<line id="Line 21" x1="46.7012" y1="72.0344" x2="45.1012" y2="48.8344" stroke="black"/>
+<line id="Line 22" x1="32.3178" y1="60.3069" x2="56.3178" y2="56.3069" stroke="black"/>
+</g>
+</g>
+</g>
+</svg>

@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/*
+If its showing a warning sign, it is a warning information from VS Code, not an explicitly an error.
+Tailwind should still work regardless. If you really want to get rid of the warning, you can do one of the following;
+1. Use the PostCSS plugin
+2. Use the Tailwind CSS IntelliSense extension for VS Code
+3. Turn off CSS validation.
+
+Press Ctrl + Shift + P to open the command palette, search for Open Workspace Settings (JSON), and add the following line:
+{
+    "files.associations": {
+        "*.css": "tailwindcss"
+    }
+}
+
+*/
