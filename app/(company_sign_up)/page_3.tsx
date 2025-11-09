@@ -12,6 +12,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 
 import * as React from 'react';
@@ -24,6 +25,8 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import axios from 'axios';
+import { isWeb } from '../../utils/platform';
+import { getApiUrl } from '../../utils/apiConfig';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -82,11 +85,7 @@ export default function CompanyPage3() {
         payload.append('projects', projectsJson);
       } catch (e) {}
 
-      // 192.168.10.15 (home ip address)
-      // 192.168.0.118 (msia home ip address)
-      // 172.20.10.3 (phone data ip address)
-      // 192.168.0.104 (taiping home ip address)
-      const res = await axios.post('http://localhost:8000/api/user/register/professor/', payload, {
+      const res = await axios.post(getApiUrl('api/user/register/professor/'), payload, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
@@ -94,11 +93,33 @@ export default function CompanyPage3() {
       router.push('/(dashboard)');
     } catch (error: any) {
       console.error('Submission error:', error.response?.data || error.message);
-      Alert.alert('Submission Failed', 'Please try again later.');
+      if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
+        const apiUrl = getApiUrl('api/user/register/professor/');
+        Alert.alert(
+          'Connection Error',
+          `Cannot connect to backend server.\n\nPlease ensure:\n1. Backend is running\n2. Backend server is started\n3. Server URL: ${apiUrl}\n\nSee backend/README.md for instructions.`
+        );
+      } else if (error.response) {
+        Alert.alert('Submission Failed', error.response.data?.detail || error.response.data?.message || 'Please check your input and try again.');
+      } else {
+        Alert.alert('Submission Failed', error.message || 'Please try again later.');
+      }
     }
   };
 
-  const swipeUpGesture = Gesture.Pan()
+  const handleSwipeSubmit = () => {
+    if (isWeb) {
+      translateY.value = withTiming(-windowHeight, { duration: 300 }, (finished) => {
+        if (finished) {
+          handleSubmit();
+        }
+      });
+    } else {
+      handleSubmit();
+    }
+  };
+
+  const swipeUpGesture = !isWeb ? Gesture.Pan()
     .onUpdate((event) => {
       if (event.translationY < 0) {
         translateY.value = event.translationY;
@@ -115,11 +136,10 @@ export default function CompanyPage3() {
       } else {
         translateY.value = withSpring(0, { damping: 10 });
       }
-    });
+    }) : undefined;
 
-  return (
-    <GestureDetector gesture={swipeUpGesture}>
-      <Animated.View style={[styles.container, cardStyle]}>
+  const content = (
+    <Animated.View style={[styles.container, cardStyle]}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <SafeAreaView style={styles.page}>
             <StatusBar barStyle="dark-content" />
@@ -177,14 +197,30 @@ export default function CompanyPage3() {
             </View>
 
             <View style={styles.footer}>
-              <View style={styles.swipe_up_container}>
-                <Text style={styles.swipe_up_text}>SWIPE UP TO FINISH REGISTRATION</Text>
-                <ArrowDown style={styles.arrow_down} width={25} height={25} />
-              </View>
+              {isWeb ? (
+                <TouchableOpacity onPress={handleSwipeSubmit} style={[styles.swipe_up_container, { cursor: 'pointer' }]}>
+                  <Text style={styles.swipe_up_text}>CLICK TO FINISH REGISTRATION</Text>
+                  <ArrowDown style={styles.arrow_down} width={25} height={25} />
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.swipe_up_container}>
+                  <Text style={styles.swipe_up_text}>SWIPE UP TO FINISH REGISTRATION</Text>
+                  <ArrowDown style={styles.arrow_down} width={25} height={25} />
+                </View>
+              )}
             </View>
           </SafeAreaView>
         </TouchableWithoutFeedback>
-      </Animated.View>
+    </Animated.View>
+  );
+
+  if (isWeb || !swipeUpGesture) {
+    return content;
+  }
+
+  return (
+    <GestureDetector gesture={swipeUpGesture}>
+      {content}
     </GestureDetector>
   );
 }

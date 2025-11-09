@@ -56,6 +56,17 @@ class StudentProfile(models.Model):
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     transcript = models.FileField(upload_to='transcripts/', null=True, blank=True)
     resume = models.FileField(upload_to='resumes/', null=True, blank=True)
+    # Algorithm-required fields
+    headline = models.CharField(max_length=200, blank=True, null=True)
+    summary = models.TextField(blank=True, null=True)
+    courses = models.JSONField(default=list, blank=True)  # List of courses
+    skills = models.JSONField(default=list, blank=True)  # List of skills
+    skills_text = models.TextField(blank=True, null=True)
+    gpa = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    hrs_per_week = models.IntegerField(blank=True, null=True)
+    avail_start = models.DateField(blank=True, null=True)
+    avail_end = models.DateField(blank=True, null=True)
+    reliability = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username} Profile"
@@ -107,6 +118,13 @@ class ProfessorProject(models.Model):
     modality = models.CharField(max_length=50, blank=True, null=True)  # e.g., Remote/On-site/Hybrid
     location = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    # Algorithm-required fields
+    required_skills = models.JSONField(default=list, blank=True)  # List of required skills
+    hrs_per_week = models.IntegerField(blank=True, null=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
+    capacity = models.IntegerField(default=1)  # Number of students needed
+    is_open = models.BooleanField(default=True)  # Whether project is accepting applications
 
     def __str__(self):
         return f"{self.title} ({self.profile.professor_name or self.profile.user.username})"

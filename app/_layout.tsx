@@ -6,7 +6,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { withTiming } from "react-native-reanimated";
 import React from "react";
 import { StackCardInterpolationProps } from "@react-navigation/stack";
-import { Easing } from "react-native";
+import { Easing, Platform } from "react-native";
+import { isWeb } from "../utils/platform";
 
 
 // const forFade = ({ current }: StackCardInterpolationProps) => ({
@@ -33,23 +34,32 @@ import { Easing } from "react-native";
 // };
 
 export default function RootLayout() {
+  const stackContent = (
+    <Stack
+      screenOptions={{ 
+      headerShown: false,
+      gestureEnabled: !isWeb, // Disable gestures on web for better performance
+      animation: "none",
+      }}>
+      {/* We can also configure screens here (e.g., disable default animation for log_in) */}
+      <Stack.Screen name="index" options={{ animation: 'slide_from_bottom' }} />
+      <Stack.Screen name="log_in_page" options={{ animation: 'fade' }} />
+      <Stack.Screen name="(dashboard)" options={{ animation: 'fade' }} />
+      <Stack.Screen name="(settings)" options={{ animation: 'slide_from_right' }} />
+      <Stack.Screen name="(swiping_page)" options={{ animation: 'slide_from_right' }} />
+      <Stack.Screen name="(daily_part_time)" options={{ animation: 'slide_from_right' }} />
+    </Stack>
+  );
+
+  // On web, GestureHandlerRootView may cause issues, so we conditionally wrap it
+  if (isWeb) {
+    return stackContent;
+  }
+
   return (
-    // Wrap the navigation stack in GestureHandlerRootView to enable gestures
+    // Wrap the navigation stack in GestureHandlerRootView to enable gestures on mobile
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Stack
-        screenOptions={{ 
-        headerShown: false,
-        gestureEnabled: true,
-        animation: "none",
-        }}>
-        {/* We can also configure screens here (e.g., disable default animation for log_in) */}
-        <Stack.Screen name="index" options={{ animation: 'slide_from_bottom' }} />
-        <Stack.Screen name="log_in_page" options={{ animation: 'fade' }} />
-        <Stack.Screen name="(dashboard)" options={{ animation: 'fade' }} />
-        <Stack.Screen name="(settings)" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="(swiping_page)" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="(daily_part_time)" options={{ animation: 'slide_from_right' }} />
-      </Stack>
+      {stackContent}
     </GestureHandlerRootView>
   );
 }

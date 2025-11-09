@@ -8,8 +8,11 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
+import WebCardSwiper, { WebCardSwiperRef } from '../../components/WebCardSwiper';
+import { isWeb } from '../../utils/platform';
 import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
@@ -210,7 +213,32 @@ function Card({ data }: { data: CardT }) {
 }
 
 export default function Discover() {
-  const swiperRef = useRef<Swiper<CardT>>(null);
+  const mobileSwiperRef = useRef<Swiper<CardT>>(null);
+  const webSwiperRef = useRef<WebCardSwiperRef>(null);
+
+  const handleSwipeLeft = (index: number) => {
+    console.log('Nope:', CARDS[index].id);
+  };
+
+  const handleSwipeRight = (index: number) => {
+    console.log('Liked:', CARDS[index].id);
+  };
+
+  const swipeLeft = () => {
+    if (isWeb) {
+      webSwiperRef.current?.swipeLeft();
+    } else {
+      mobileSwiperRef.current?.swipeLeft();
+    }
+  };
+
+  const swipeRight = () => {
+    if (isWeb) {
+      webSwiperRef.current?.swipeRight();
+    } else {
+      mobileSwiperRef.current?.swipeRight();
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -221,45 +249,73 @@ export default function Discover() {
         </TouchableOpacity>
       </View>
 
-      <Swiper
-        ref={swiperRef}
-        cards={CARDS}
-        renderCard={(card) => (card ? <Card data={card} /> : <View />)}
-        keyExtractor={(c) => c.id}
-        cardIndex={0}
-        stackSize={2}
-        stackScale={10}
-        stackSeparation={14}
-        backgroundColor="transparent"
-        disableTopSwipe
-        disableBottomSwipe
-        verticalSwipe={false}
-        onSwipedRight={(i) => console.log('Liked:', CARDS[i].id)}
-        onSwipedLeft={(i) => console.log('Nope:', CARDS[i].id)}
-        overlayLabels={{
-          left: {
-            title: 'NOPE',
-            style: { label: styles.nopeLabel, wrapper: styles.nopeWrapper },
-          },
-          right: {
-            title: 'LIKE',
-            style: { label: styles.likeLabel, wrapper: styles.likeWrapper },
-          },
-        }}
-        containerStyle={{ overflow: 'visible' }}
-        cardVerticalMargin={12}
-      />
+      {isWeb ? (
+        <WebCardSwiper
+          ref={webSwiperRef}
+          cards={CARDS}
+          renderCard={(card: CardT) => (card ? <Card data={card} /> : <View />)}
+          keyExtractor={(c: CardT) => c.id}
+          cardIndex={0}
+          stackSize={2}
+          disableTopSwipe
+          disableBottomSwipe
+          verticalSwipe={false}
+          onSwipedRight={handleSwipeRight}
+          onSwipedLeft={handleSwipeLeft}
+          overlayLabels={{
+            left: {
+              title: 'NOPE',
+              style: { label: styles.nopeLabel, wrapper: styles.nopeWrapper },
+            },
+            right: {
+              title: 'LIKE',
+              style: { label: styles.likeLabel, wrapper: styles.likeWrapper },
+            },
+          }}
+          containerStyle={{ overflow: 'visible' }}
+          cardVerticalMargin={12}
+        />
+      ) : (
+        <Swiper
+          ref={mobileSwiperRef}
+          cards={CARDS}
+          renderCard={(card: CardT) => (card ? <Card data={card} /> : <View />)}
+          keyExtractor={(c: CardT) => c.id}
+          cardIndex={0}
+          stackSize={2}
+          stackScale={10}
+          stackSeparation={14}
+          backgroundColor="transparent"
+          disableTopSwipe
+          disableBottomSwipe
+          verticalSwipe={false}
+          onSwipedRight={handleSwipeRight}
+          onSwipedLeft={handleSwipeLeft}
+          overlayLabels={{
+            left: {
+              title: 'NOPE',
+              style: { label: styles.nopeLabel, wrapper: styles.nopeWrapper },
+            },
+            right: {
+              title: 'LIKE',
+              style: { label: styles.likeLabel, wrapper: styles.likeWrapper },
+            },
+          }}
+          containerStyle={{ overflow: 'visible' }}
+          cardVerticalMargin={12}
+        />
+      )}
 
       <View style={styles.actions}>
         <TouchableOpacity
           style={[styles.actionBtn, styles.nopeBtn]}
-          onPress={() => swiperRef.current?.swipeLeft()}
+          onPress={swipeLeft}
         >
           <Ionicons name="close" size={24} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.actionBtn, styles.likeBtn]}
-          onPress={() => swiperRef.current?.swipeRight()}
+          onPress={swipeRight}
         >
           <Ionicons name="heart" size={24} />
         </TouchableOpacity>

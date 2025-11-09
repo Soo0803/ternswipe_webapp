@@ -6,6 +6,12 @@ type ProjectInput = {
   description: string;
   modality?: string;
   location?: string;
+  // Algorithm-required fields
+  required_skills: string[]; // List of required skills
+  hrs_per_week: string; // Hours required per week
+  start_date: string; // Project start date (ISO format)
+  end_date: string; // Project end date (ISO format)
+  capacity: string; // Number of students needed
 };
 
 type CompanyFormData = {
@@ -59,7 +65,15 @@ export const CompanyFormProvider = ({ children }: Props) => {
     lab_second_image: null,
     lab_third_image: null,
     position_description: '',
-    projects: [],
+    projects: [{
+      title: '',
+      description: '',
+      required_skills: [],
+      hrs_per_week: '',
+      start_date: '',
+      end_date: '',
+      capacity: '1',
+    }],
   });
 
   return (

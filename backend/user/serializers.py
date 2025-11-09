@@ -23,6 +23,17 @@ class StudentProfileSerializer(serializers.ModelSerializer):
             'phone_number',
             'transcript',
             'resume',
+            # Algorithm fields
+            'headline',
+            'summary',
+            'courses',
+            'skills',
+            'skills_text',
+            'gpa',
+            'hrs_per_week',
+            'avail_start',
+            'avail_end',
+            'reliability',
         )
 
 
@@ -54,6 +65,23 @@ class ProfessorProfileSerializer(serializers.ModelSerializer):
 
 
 class ProfessorProjectSerializer(serializers.ModelSerializer):
+    professor_name = serializers.CharField(source='profile.professor_name', read_only=True)
+    university = serializers.CharField(source='profile.university', read_only=True)
+    profile_image = serializers.FileField(source='profile.profile_image', read_only=True)
+    
     class Meta:
         model = ProfessorProject
-        fields = ('id', 'profile', 'title', 'description', 'modality', 'location', 'created_at')
+        fields = (
+            'id', 'profile', 'title', 'description', 'modality', 'location', 'created_at',
+            # Algorithm fields
+            'required_skills',
+            'hrs_per_week',
+            'start_date',
+            'end_date',
+            'capacity',
+            'is_open',
+            # Profile fields
+            'professor_name',
+            'university',
+            'profile_image',
+        )

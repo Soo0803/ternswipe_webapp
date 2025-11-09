@@ -1,6 +1,5 @@
 import { 
   StyleSheet, 
-  TouchableOpacity, 
   Text, 
   View, 
   Dimensions, 
@@ -10,20 +9,26 @@ import {
   Platform,
   TouchableWithoutFeedback,
   StatusBar,
+  ScrollView,
 } from 'react-native';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage for token
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as React from 'react';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useRouter } from "expo-router";
-// import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { getApiUrl } from '../utils/apiConfig';
+import { isWeb } from '../utils/platform';
+import { getFontSize, getPadding, getMaxWidth } from '../utils/responsive';
 
 import AppLogo from "./../assets/app_icon/in_app_logo.svg";
 import { TextInput } from 'react-native-gesture-handler';
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { WebsiteLayout } from '../components/WebsiteLayout';
+import { FormContainer } from '../components/FormContainer';
+import { FormField } from '../components/FormField';
+import { Button } from '../components/Button';
 
 // SplashScreen.setOptions({
 //   duration: 1000, // Match this with your transition duration
@@ -57,7 +62,7 @@ export default function log_in_page() {
       console.log("Login payload:", payload);
   
       const response = await axios.post(
-        "http://localhost:8000/api/user/login/",
+        getApiUrl("api/user/login/"),
         payload,
         {
           headers: { "Content-Type": "application/json" },
@@ -82,176 +87,198 @@ export default function log_in_page() {
             error.response.data.detail || "Unauthorized (check credentials)"
           }`
         );
+      } else if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
+        console.error("Network/connection error:", error.message);
+        const apiUrl = getApiUrl("api/user/login/");
+        alert(`Cannot connect to backend server.\n\nPlease ensure:\n1. Backend is running on ${apiUrl}\n2. Backend server is started (see backend/README.md)\n3. CORS is enabled for web connections`);
       } else {
         console.error("Network/other error:", error.message);
-        alert("Network error — check if backend is running on localhost:8000");
+        alert(`Network error: ${error.message}\n\nPlease check if backend is running.`);
       }
     }
   };
   // Wei Jie update to connect API 
 
-  return (
+  const content = (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style = {styles.log_in_page}>
-        <StatusBar barStyle="dark-content"/>
-        <Pressable onPress={() => router.push("/")}>
-          <AppLogo width={65} height={65}/>
-        </Pressable>
-
-        <View style={styles.log_in_form}>
-          <View style={styles.input_form}>
-            <Text style={styles.text}>Phone No./Email</Text>
-              <TextInput
-                placeholder='Enter Your Phone No./Email'
-                style={styles.inputBox}
-                keyboardType='email-address'
-                value={username}
-                onChangeText={setEmail}
-              />
-          </View>
-
-          <View style={styles.input_form}>
-            <Text style={styles.text}>Password</Text>
-            <View style= {styles.passwordInputContainer}>
-              <TextInput
-                placeholder='Enter Your Password'
-                style={styles.passwordInput}
-                secureTextEntry={!passwordVisible}
-                value={password}
-                onChangeText={setPassword}
-              />
-              <Pressable onPress={() => setPassWordVisible(!passwordVisible)}>
-                <Ionicons
-                  name={passwordVisible ? "eye-off" : "eye"}
-                  size={20}
-                  color="gray"
-                  style={{marginLeft: 8}}
-                  />
+      <WebsiteLayout showHeader={isWeb}>
+        <View style={styles.content}>
+          {!isWeb && (
+            <SafeAreaView>
+              <StatusBar barStyle="dark-content"/>
+              <Pressable onPress={() => router.push("/")} style={styles.mobileLogoContainer}>
+                <AppLogo width={65} height={65}/>
               </Pressable>
-            </View>
-          </View>
+            </SafeAreaView>
+          )}
           
+          <FormContainer>
+            <View style={styles.formHeader}>
+              <Text style={styles.title}>Sign In</Text>
+              <Text style={styles.subtitle}>Enter your credentials to access your account</Text>
+            </View>
 
-          <View style={styles.link_click}>
-            <Pressable>
-              <Text style={styles.link_text}>Forgot password?</Text>
-            </Pressable>
-            <Pressable>
-              <Text style={styles.link_text}>Forgot username?</Text>
-            </Pressable>
+              <View style={styles.form}>
+                <FormField
+                  label="Email or Username"
+                  placeholder="Enter your email or username"
+                  value={username}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  required
+                  fullWidth
+                />
+
+                <View style={styles.passwordContainer}>
+                  <FormField
+                    label="Password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!passwordVisible}
+                    required
+                    fullWidth
+                    containerStyle={styles.passwordField}
+                  />
+                  <Pressable 
+                    onPress={() => setPassWordVisible(!passwordVisible)}
+                    style={styles.eyeIcon}
+                  >
+                    <Ionicons
+                      name={passwordVisible ? "eye-off" : "eye"}
+                      size={22}
+                      color="#666"
+                    />
+                  </Pressable>
+                </View>
+
+                <View style={styles.forgotPasswordContainer}>
+                  <Pressable>
+                    <Text style={styles.forgotPassword}>Forgot password?</Text>
+                  </Pressable>
+                  <Pressable>
+                    <Text style={styles.forgotPassword}>Forgot username?</Text>
+                  </Pressable>
+                </View>
+
+                <Button
+                  title="Sign In"
+                  onPress={handleLogin}
+                  fullWidth
+                  style={styles.loginButton}
+                />
+
+                <View style={styles.divider}>
+                  <View style={styles.dividerLine} />
+                  <Text style={styles.dividerText}>OR</Text>
+                  <View style={styles.dividerLine} />
+                </View>
+
+                <Button
+                  title="Register as Student"
+                  onPress={() => router.push("/(student_sign_up)")}
+                  variant="outline"
+                  fullWidth
+                  style={styles.registerButton}
+                />
+
+                <Button
+                  title="Register as Professor"
+                  onPress={() => router.push("/(company_sign_up)")}
+                  variant="outline"
+                  fullWidth
+                  style={styles.registerButton}
+                />
+              </View>
+            </FormContainer>
           </View>
-
-          {/* Previous version */}
-          {/* <Pressable style={styles.button} onPress={() => router.push("/(dashboard)")}>
-            <Text style={(styles.buttonText)}>LOG IN</Text>
-          </Pressable> */}
-          {/* Previous version */}
-
-          {/* Wei Jie update to connect API */}
-          <Pressable style={styles.button} onPress={handleLogin}>
-            <Text style={styles.buttonText}>LOG IN</Text>
-          </Pressable>
-          {/* Wei Jie update to connect API */}
-
-          <Pressable style={styles.button} onPress={() => router.push("/(student_sign_up)")}>
-            <Text style={(styles.buttonText)}>NEW REGISTER FOR STUDENT</Text>
-          </Pressable>
-
-          <Pressable style={styles.button} onPress={() => router.push("/(company_sign_up)")}>
-            <Text style={(styles.buttonText)}>NEW REGISTER FOR PROFESSOR</Text>
-          </Pressable>
-
-        </View>
-      </SafeAreaView>
+      </WebsiteLayout>
     </TouchableWithoutFeedback>
   );
+
+  return content;
 }
 
 const styles = StyleSheet.create({
-
-  log_in_page:{
+  content: {
+    width: '100%',
+    maxWidth: 500,
+    marginHorizontal: 'auto',
+    paddingVertical: isWeb ? getPadding(60) : getPadding(20),
+  },
+  mobileLogoContainer: {
+    alignSelf: 'center',
+    marginBottom: getPadding(20),
+    paddingTop: getPadding(20),
+  },
+  formHeader: {
+    marginBottom: getPadding(32),
+    textAlign: 'center',
+  },
+  title: {
+    fontSize: getFontSize(32),
+    fontWeight: '700',
+    color: '#1a1a1a',
+    marginBottom: getPadding(12),
+    fontFamily: 'Inter-Regular',
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: getFontSize(16),
+    color: '#666',
+    fontFamily: 'Inter-Regular',
+    textAlign: 'center',
+    lineHeight: getFontSize(24),
+  },
+  form: {
+    width: '100%',
+  },
+  passwordContainer: {
+    position: 'relative',
+    width: '100%',
+  },
+  passwordField: {
+    width: '100%',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: getPadding(16),
+    top: getPadding(36),
+    zIndex: 10,
+  },
+  forgotPasswordContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: getPadding(24),
+    marginTop: getPadding(-8),
+  },
+  forgotPassword: {
+    fontSize: getFontSize(13),
+    color: '#7da0ca',
+    fontFamily: 'Inter-Regular',
+    textDecorationLine: 'underline',
+  },
+  loginButton: {
+    marginBottom: getPadding(16),
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: getPadding(24),
+  },
+  dividerLine: {
     flex: 1,
-    backgroundColor : "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-
+    height: 1,
+    backgroundColor: '#e0e0e0',
   },
-
-  log_in_form:{
-    width: wp(100),
-    gap: 10,
-    paddingHorizontal: 31,
-    top: 20,
+  dividerText: {
+    marginHorizontal: getPadding(16),
+    fontSize: getFontSize(12),
+    color: '#999',
+    fontFamily: 'Inter-Regular',
   },
-
-  input_form:{
-    flexDirection: "row",
-    justifyContent: "center",
-    gap:2,
-    alignItems: "center",
-  },
-
-  text: {
-    width: wp(20),
-    fontFamily: "Inter-Regular",
-  },
-
-  inputBox: {
-    backgroundColor: "light-grey",
-    borderColor: "black",
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingVertical: 8,
-    paddingHorizontal: 2,
-    textAlign: "center",
-    flex: 1,
-    fontFamily: "Inter-Regular",
-  },
-
-  link_click:{
-    flexDirection: "row",
-    justifyContent: "space-between",
-    //marginVertical: hp(2),
-  },
-
-  link_text:{
-    fontFamily: "Inter-Regular",
-    color: "#7da0ca",
-    fontSize: 11,
-    textDecorationLine: "underline",
-  },
-
-  button:{
-    backgroundColor: "#7da0ca",
-    paddingVertical: 8,
-    borderRadius: 5,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  buttonText:{
-    textAlign: "center",
-    fontFamily: "Inter-Regular",
-    color: "#fff",
-  },
-
-  passwordInputContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    borderColor: "black",
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 8,
-    justifyContent: "center",
-    backgroundColor: "#fff",
-  },
-  
-  passwordInput: {
-    flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 6,
-    fontFamily: "Inter-Regular",
-    textAlign: "center"
+  registerButton: {
+    marginBottom: getPadding(12),
   },
 });

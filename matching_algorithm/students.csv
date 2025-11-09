@@ -1,0 +1,101 @@
+sid,st_text,gpa_bucket,hrs,avail_weeks,reliability,lack_commit,poor_comms,weak_writing,weak_numeracy
+s1,"statistics major; courses: Linear Algebra, Measure Theory; skills: keras, signal processing, gnn, go, llm prompting, c++. Also built a small drone with ROS and PX4.",3.5-4.0,15,9,0.715,0,0,0,1
+s2,"applied physics major; courses: Probability, Numerical Methods; skills: pytorch, cv, data analysis, keras, tensorflow, fastapi. Also developed a FastAPI microservice.",3.5-4.0,20,25,0.651,0,0,0,0
+s3,"cs major; courses: Computer Networks, Algorithms; skills: gnn, keras, signal processing, python, cad, quant, r. Also built a small drone with ROS and PX4.",2.5-3.0,21,26,0.684,0,1,0,0
+s4,"applied physics major; courses: Probability, Numerical Methods; skills: matlab, data analysis, python, nlp, sql. Also developed a FastAPI microservice.",3.5-4.0,14,21,0.758,0,0,0,0
+s5,"aerospace major; courses: Materials, Dynamics; skills: data analysis, cv, signal processing, statistics, sql, control theory, ocr. Also published a workshop paper on anomaly detection.",3.5-4.0,15,27,0.763,0,1,0,0
+s6,"materials major; courses: CAD/CAM, Finite Element Analysis; skills: statistics, pytorch, retrieval, docker. Also designed a PCB for an IMU logger.",3.0-3.5,6,19,0.637,0,0,0,0
+s7,"statistics major; courses: Linear Algebra, Numerical Methods; skills: data analysis, statistics, gnn, matlab, etl, llm prompting. Also ran CFD for a propeller design.",2.5-3.0,13,18,0.506,0,1,0,1
+s8,"computational finance major; courses: Derivatives, Risk Management; skills: statistics, matlab, data analysis, openvino. Also won a hackathon for AR navigation.",3.5-4.0,12,12,0.587,0,0,0,0
+s9,"materials major; courses: CAD/CAM, Materials; skills: python, pytorch, nlp, hadoop. Also ran CFD for a propeller design.",3.0-3.5,14,14,1.0,0,0,0,0
+s10,"aerospace major; courses: Dynamics, Finite Element Analysis; skills: signal processing, cv, keras, data analysis, ansys, tensorflow, r. Also developed a FastAPI microservice.",3.5-4.0,7,16,0.916,1,0,0,0
+s11,"biomedical major; courses: Biostatistics, Genetics; skills: data analysis, python, gnn, statistics, react native, c++. Also published a workshop paper on anomaly detection.",3.0-3.5,10,9,0.692,0,0,0,0
+s12,"cheme major; courses: Thermodynamics, Materials; skills: signal processing, keras, timeseries. Also won a hackathon for AR navigation.",3.0-3.5,21,16,0.841,0,0,0,0
+s13,"design major; courses: Finite Element Analysis, Materials; skills: cv, signal processing, go, react, vhdl. Also won a hackathon for AR navigation.",2.5-3.0,22,24,0.913,0,0,1,1
+s14,"aerospace major; courses: CAD/CAM, Thermodynamics; skills: statistics, pytorch, matlab, keras, fastapi, ansys. Also implemented a Kalman filter for tracking.",3.0-3.5,6,20,0.434,0,0,0,0
+s15,"physics major; courses: Dynamics, Thermodynamics; skills: signal processing, keras, cv, gnn, verilog, spark, causal inference. Also published a workshop paper on anomaly detection.",3.5-4.0,13,20,0.803,0,0,0,0
+s16,"biomedical major; courses: Biostatistics, Neuroscience; skills: keras, nlp, python, gnn, sql, go, ansys. Also built a small drone with ROS and PX4.",3.0-3.5,14,23,0.626,0,0,0,0
+s17,"electrical engineering major; courses: Control, Circuits; skills: matlab, python, kalman filter. Also implemented a Kalman filter for tracking.",3.5-4.0,21,12,1.0,0,0,0,0
+s18,"industrial engineering major; courses: Materials, Finite Element Analysis; skills: cv, data analysis, pytorch, matlab, ansys. Also implemented a Kalman filter for tracking.",3.5-4.0,11,24,0.867,0,1,0,0
+s19,"civil major; courses: Materials, Finite Element Analysis; skills: nlp, matlab, statistics, proteomics, flask. Also ran CFD for a propeller design.",3.5-4.0,21,14,0.466,0,0,0,0
+s20,"civil major; courses: Dynamics, CAD/CAM; skills: signal processing, python, openvino, c++, kalman filter. Also published a workshop paper on anomaly detection.",2.5-3.0,9,23,0.858,0,0,0,0
+s21,"design major; courses: CAD/CAM, Finite Element Analysis; skills: pytorch, signal processing, mediapipe, forecasting. Also trained a small LLM finetune.",3.0-3.5,13,23,0.435,0,0,0,0
+s22,"statistics major; courses: Linear Algebra, Probability; skills: matlab, cv, keras, react native. Also built a small drone with ROS and PX4.",2.5-3.0,14,12,0.027,0,0,0,0
+s23,"cs major; courses: Databases, Compilers; skills: gnn, statistics, timeseries. Also trained a small LLM finetune.",2.5-3.0,17,15,0.803,0,0,0,0
+s24,"data science major; courses: Computer Networks, Algorithms; skills: data analysis, pytorch, nlp, react native, reinforcement learning, control theory. Also ran CFD for a propeller design.",2.5-3.0,18,28,0.684,0,0,0,0
+s25,"industrial engineering major; courses: Materials, Thermodynamics; skills: gnn, signal processing, statistics, matlab, kalman filter, kubernetes, verilog. Also developed a FastAPI microservice.",3.0-3.5,10,15,0.703,1,0,0,0
+s26,"math major; courses: Optimization, Probability; skills: data analysis, keras, statistics, retrieval. Also won a hackathon for AR navigation.",3.5-4.0,10,15,0.776,0,0,1,0
+s27,"software engineering major; courses: Operating Systems, Compilers; skills: matlab, pytorch, data analysis, kalman filter, graph mining. Also built a small drone with ROS and PX4.",2.5-3.0,18,28,0.486,0,0,1,0
+s28,"data science major; courses: Compilers, Databases; skills: data analysis, keras, hadoop, bayesian inference. Also published a workshop paper on anomaly detection.",3.5-4.0,22,14,0.228,0,0,0,0
+s29,"materials major; courses: Materials, CAD/CAM; skills: python, data analysis, docker, finite element analysis, quant. Also won a hackathon for AR navigation.",3.5-4.0,10,14,0.732,0,0,0,0
+s30,"data science major; courses: Algorithms, Compilers; skills: gnn, data analysis, llm prompting, timeseries. Also published a workshop paper on anomaly detection.",2.5-3.0,10,22,0.746,0,0,0,0
+s31,"data science major; courses: Compilers, Databases; skills: matlab, cv, data analysis, xgboost, solidworks, verilog. Also built a small drone with ROS and PX4.",3.0-3.5,6,28,0.868,0,0,0,1
+s32,"electrical engineering major; courses: Electromagnetics, Circuits; skills: matlab, cv, speech processing, lightgbm. Also implemented a Kalman filter for tracking.",3.5-4.0,11,11,0.572,1,0,0,0
+s33,"computer science major; courses: Databases, Compilers; skills: pytorch, matlab, statistics, edge ai, scikit-learn, recsys. Also ran CFD for a propeller design.",3.0-3.5,9,13,0.871,0,0,0,0
+s34,"statistics major; courses: Optimization, Numerical Methods; skills: signal processing, keras, matlab, opencv. Also designed a PCB for an IMU logger.",3.5-4.0,8,18,0.757,0,0,0,0
+s35,"materials major; courses: Thermodynamics, Finite Element Analysis; skills: python, keras, quant, docker, rust. Also interned on PLC automation.",3.0-3.5,15,18,0.782,0,0,0,0
+s36,"computational finance major; courses: Derivatives, Stochastic Calculus; skills: data analysis, gnn, pytorch, finite element analysis, 3d printing. Also built a small drone with ROS and PX4.",3.5-4.0,18,26,0.54,0,0,0,0
+s37,"data science major; courses: Operating Systems, Computer Networks; skills: pytorch, statistics, nlp, signal processing, finite element analysis, rust. Also designed a PCB for an IMU logger.",3.5-4.0,6,11,0.698,0,0,1,0
+s38,"electronics major; courses: Electromagnetics, Signals; skills: keras, signal processing, matlab, vlsi, proteomics, spark. Also won a hackathon for AR navigation.",2.5-3.0,7,20,0.603,0,0,0,0
+s39,"aerospace major; courses: Finite Element Analysis, CAD/CAM; skills: gnn, cv, python, 3d printing, mediapipe. Also implemented a Kalman filter for tracking.",2.5-3.0,15,19,0.858,0,0,0,0
+s40,"biomedical major; courses: Molecular Biology, Proteomics; skills: nlp, signal processing, data analysis, bayesian inference, speech processing, stm32. Also built a small drone with ROS and PX4.",3.0-3.5,13,26,0.425,0,0,0,0
+s41,"computational biology major; courses: Biostatistics, Neuroscience; skills: matlab, data analysis, quant. Also developed a FastAPI microservice.",3.0-3.5,7,26,0.655,0,0,0,0
+s42,"software engineering major; courses: Algorithms, Compilers; skills: matlab, cv, ocr, fpga. Also interned on PLC automation.",3.5-4.0,20,12,0.726,0,0,0,0
+s43,"applied physics major; courses: Probability, Measure Theory; skills: pytorch, python, matlab, statistics, verilog. Also published a workshop paper on anomaly detection.",2.5-3.0,22,12,0.661,0,0,0,0
+s44,"mechanical major; courses: CAD/CAM, Finite Element Analysis; skills: gnn, matlab, cv, ros, kubernetes, edge ai. Also designed a PCB for an IMU logger.",3.0-3.5,22,12,0.579,0,0,0,0
+s45,"statistics major; courses: Numerical Methods, Measure Theory; skills: cv, pytorch, quant, cuda, graph mining. Also interned on PLC automation.",2.5-3.0,14,16,0.63,0,0,0,0
+s46,"computational biology major; courses: Molecular Biology, Proteomics; skills: statistics, data analysis, signal processing, airflow, forecasting, react native. Also designed a PCB for an IMU logger.",3.5-4.0,6,16,0.619,0,0,0,0
+s47,"chemical major; courses: Materials, Finite Element Analysis; skills: data analysis, python, vhdl. Also won a hackathon for AR navigation.",3.5-4.0,8,10,0.766,0,0,1,1
+s48,"civil major; courses: Finite Element Analysis, Materials; skills: keras, cv, xgboost, verilog. Also published a workshop paper on anomaly detection.",3.0-3.5,21,12,0.597,0,0,0,0
+s49,"data science major; courses: Computer Networks, Operating Systems; skills: data analysis, statistics, cv, speech processing, ros. Also developed a FastAPI microservice.",3.0-3.5,17,12,0.916,0,0,0,1
+s50,"biomedical major; courses: Biostatistics, Molecular Biology; skills: gnn, matlab, keras, nlp, autocad. Also trained a small LLM finetune.",3.5-4.0,8,21,0.833,0,0,1,1
+s51,"computational finance major; courses: Time Series, Stochastic Calculus; skills: nlp, python, pytorch, verilog, forecasting. Also developed a FastAPI microservice.",3.0-3.5,15,23,1.0,0,0,0,0
+s52,"biomedical major; courses: Molecular Biology, Biostatistics; skills: statistics, keras, causal inference, tensorflow, lightgbm. Also designed a PCB for an IMU logger.",3.5-4.0,20,26,0.669,0,0,0,0
+s53,"cheme major; courses: Materials, Thermodynamics; skills: nlp, cv, keras, pytorch, llm prompting, causal inference. Also developed a FastAPI microservice.",3.0-3.5,8,19,0.616,0,0,0,0
+s54,"computer science major; courses: Computer Networks, Operating Systems; skills: matlab, data analysis, statistics, vlsi, lightgbm, recsys. Also published a workshop paper on anomaly detection.",3.5-4.0,11,13,0.878,0,0,1,0
+s55,"cheme major; courses: Dynamics, CAD/CAM; skills: python, statistics, data analysis, django, vlsi, stm32. Also implemented a Kalman filter for tracking.",2.5-3.0,8,26,0.783,0,0,0,0
+s56,"biomedical major; courses: Molecular Biology, Proteomics; skills: pytorch, keras, data analysis, gnn, spark, quant, tensorflow. Also ran CFD for a propeller design.",3.0-3.5,10,11,0.698,0,0,0,0
+s57,"ee major; courses: Control, VLSI; skills: statistics, cv, keras, matlab, opencv, xgboost. Also trained a small LLM finetune.",3.5-4.0,10,23,0.825,0,0,0,0
+s58,"civil major; courses: CAD/CAM, Dynamics; skills: pytorch, python, matlab, cv, xgboost, proteomics, java. Also built a small drone with ROS and PX4.",2.5-3.0,20,25,1.0,0,0,0,0
+s59,"industrial engineering major; courses: Thermodynamics, Materials; skills: python, pytorch, matlab, forecasting, flask. Also developed a FastAPI microservice.",3.0-3.5,18,13,0.781,0,0,0,0
+s60,"electrical engineering major; courses: Electromagnetics, Control; skills: matlab, signal processing, nlp, computational finance, rust. Also won a hackathon for AR navigation.",3.0-3.5,9,17,0.903,0,0,0,0
+s61,"math major; courses: Probability, Measure Theory; skills: cv, python, cad, forecasting, recsys. Also won a hackathon for AR navigation.",3.5-4.0,9,14,0.803,0,0,0,0
+s62,"mechanical major; courses: Materials, Thermodynamics; skills: data analysis, statistics, bayesian inference, cad, cloud devops. Also designed a PCB for an IMU logger.",3.0-3.5,20,13,0.394,0,0,0,0
+s63,"aerospace major; courses: CAD/CAM, Materials; skills: nlp, signal processing, cad, proteomics, ros. Also published a workshop paper on anomaly detection.",2.5-3.0,16,25,0.796,0,0,0,0
+s64,"materials major; courses: CAD/CAM, Finite Element Analysis; skills: matlab, python, fastapi. Also built a small drone with ROS and PX4.",2.5-3.0,7,15,0.581,0,0,0,1
+s65,"materials major; courses: Thermodynamics, Finite Element Analysis; skills: cv, statistics, matlab, medical imaging, django, mediapipe. Also implemented a Kalman filter for tracking.",3.5-4.0,10,16,0.706,0,0,0,0
+s66,"statistics major; courses: Optimization, Numerical Methods; skills: data analysis, nlp, python, pytorch, retrieval, react, java. Also developed a FastAPI microservice.",3.5-4.0,10,10,0.894,0,1,0,0
+s67,"electronics major; courses: VLSI, Control; skills: signal processing, pytorch, cv, keras, sql, speech processing. Also ran CFD for a propeller design.",3.0-3.5,6,14,1.0,0,0,0,0
+s68,"electrical engineering major; courses: Circuits, Control; skills: pytorch, cv, statistics, python, mediapipe, control theory, 3d printing. Also ran CFD for a propeller design.",3.5-4.0,16,17,0.667,0,0,0,0
+s69,"software engineering major; courses: Operating Systems, Algorithms; skills: nlp, cv, pytorch, gnn, timeseries. Also published a workshop paper on anomaly detection.",3.0-3.5,18,22,0.707,0,0,0,0
+s70,"computational biology major; courses: Proteomics, Molecular Biology; skills: python, matlab, cv, stm32. Also interned on PLC automation.",3.0-3.5,20,8,0.703,0,0,0,1
+s71,"applied physics major; courses: Linear Algebra, Probability; skills: nlp, matlab, speech processing, cuda, scikit-learn. Also interned on PLC automation.",3.5-4.0,14,14,0.905,0,0,0,0
+s72,"aerospace major; courses: Finite Element Analysis, CAD/CAM; skills: pytorch, keras, nlp, gnn, cad, causal inference, kubernetes. Also published a workshop paper on anomaly detection.",2.5-3.0,18,10,0.793,0,0,0,1
+s73,"statistics major; courses: Probability, Linear Algebra; skills: pytorch, gnn, signal processing, data analysis, opencv. Also interned on PLC automation.",3.5-4.0,8,11,0.295,0,0,0,0
+s74,"cs major; courses: Databases, Computer Networks; skills: pytorch, matlab, retrieval, r. Also interned on PLC automation.",3.5-4.0,22,12,0.698,0,1,0,0
+s75,"statistics major; courses: Numerical Methods, Measure Theory; skills: matlab, cv, keras, statistics, java, causal inference, opencv. Also implemented a Kalman filter for tracking.",3.5-4.0,13,27,0.788,0,0,0,0
+s76,"computer science major; courses: Algorithms, Computer Networks; skills: keras, statistics, data analysis, airflow, ansys. Also developed a FastAPI microservice.",2.5-3.0,12,24,0.75,0,1,0,0
+s77,"biomedical major; courses: Biostatistics, Genetics; skills: data analysis, gnn, retrieval, kalman filter. Also implemented a Kalman filter for tracking.",3.5-4.0,17,27,0.848,0,0,0,0
+s78,"industrial engineering major; courses: Thermodynamics, Dynamics; skills: data analysis, statistics, bayesian inference, bioinformatics, llm prompting. Also won a hackathon for AR navigation.",3.5-4.0,12,10,0.708,0,0,0,0
+s79,"ee major; courses: Control, VLSI; skills: data analysis, matlab, keras, sql, llm prompting. Also trained a small LLM finetune.",2.5-3.0,20,11,0.53,0,0,0,1
+s80,"statistics major; courses: Measure Theory, Optimization; skills: data analysis, signal processing, rf design, r, forecasting. Also won a hackathon for AR navigation.",3.5-4.0,16,27,0.686,0,0,0,1
+s81,"data science major; courses: Compilers, Databases; skills: nlp, keras, ocr. Also implemented a Kalman filter for tracking.",3.0-3.5,11,13,0.513,0,0,0,0
+s82,"software engineering major; courses: Computer Networks, Algorithms; skills: python, matlab, gnn, fastapi, cuda, ocr. Also ran CFD for a propeller design.",2.5-3.0,11,14,0.733,1,1,0,0
+s83,"cheme major; courses: CAD/CAM, Thermodynamics; skills: gnn, signal processing, hadoop, vlsi. Also won a hackathon for AR navigation.",3.5-4.0,16,24,0.628,0,0,0,0
+s84,"electronics major; courses: Signals, Circuits; skills: data analysis, keras, airflow. Also published a workshop paper on anomaly detection.",3.5-4.0,18,23,0.424,0,0,0,0
+s85,"materials major; courses: CAD/CAM, Materials; skills: matlab, data analysis, nlp, computational finance, autocad. Also published a workshop paper on anomaly detection.",3.5-4.0,9,26,0.682,0,0,0,0
+s86,"industrial engineering major; courses: Finite Element Analysis, Dynamics; skills: signal processing, data analysis, matlab, quant, c++. Also ran CFD for a propeller design.",3.5-4.0,15,27,0.906,0,0,0,0
+s87,"aerospace major; courses: CAD/CAM, Thermodynamics; skills: keras, nlp, pytorch, cv, proteomics. Also built a small drone with ROS and PX4.",3.5-4.0,22,20,0.47,0,0,0,0
+s88,"materials major; courses: Thermodynamics, Dynamics; skills: pytorch, signal processing, statistics, nlp, etl, opencv. Also ran CFD for a propeller design.",3.5-4.0,17,25,0.528,0,0,0,0
+s89,"physics major; courses: Dynamics, Thermodynamics; skills: statistics, matlab, hadoop, quant, r. Also trained a small LLM finetune.",2.5-3.0,9,25,0.654,0,0,0,1
+s90,"computer science major; courses: Computer Networks, Compilers; skills: statistics, nlp, python, react, r. Also won a hackathon for AR navigation.",3.0-3.5,22,20,0.511,0,0,0,0
+s91,"mechanical major; courses: Finite Element Analysis, Materials; skills: data analysis, statistics, python, gnn, autocad. Also won a hackathon for AR navigation.",3.5-4.0,16,23,0.903,0,0,0,0
+s92,"materials major; courses: Finite Element Analysis, Materials; skills: statistics, nlp, quant, rust, react native. Also won a hackathon for AR navigation.",3.5-4.0,21,8,0.71,0,0,0,0
+s93,"computational biology major; courses: Molecular Biology, Biostatistics; skills: signal processing, statistics, data analysis, pytorch, airflow. Also ran CFD for a propeller design.",3.5-4.0,16,16,0.465,0,0,0,0
+s94,"design major; courses: Thermodynamics, Finite Element Analysis; skills: keras, cv, sql, django. Also designed a PCB for an IMU logger.",3.5-4.0,9,14,0.819,0,0,0,0
+s95,"math major; courses: Numerical Methods, Probability; skills: statistics, signal processing, nlp, matlab, lightgbm, recsys. Also designed a PCB for an IMU logger.",2.5-3.0,22,15,0.846,0,0,0,0
+s96,"math major; courses: Linear Algebra, Probability; skills: statistics, nlp, gnn, keras, sql, autocad, r. Also built a small drone with ROS and PX4.",3.5-4.0,22,9,0.609,0,0,0,0
+s97,"applied physics major; courses: Optimization, Numerical Methods; skills: nlp, signal processing, data analysis, statistics, sql, django, stm32. Also implemented a Kalman filter for tracking.",3.5-4.0,11,16,0.385,0,0,1,0
+s98,"computer science major; courses: Compilers, Computer Networks; skills: gnn, python, autocad, forecasting, ocr. Also built a small drone with ROS and PX4.",3.5-4.0,6,23,0.753,0,0,0,0
+s99,"math major; courses: Probability, Measure Theory; skills: signal processing, keras, etl, cad. Also implemented a Kalman filter for tracking.",3.5-4.0,22,28,0.57,0,0,0,0
+s100,"civil major; courses: CAD/CAM, Thermodynamics; skills: data analysis, gnn, cloud devops. Also designed a PCB for an IMU logger.",3.0-3.5,20,25,0.615,0,0,0,0

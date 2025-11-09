@@ -8,7 +8,8 @@ import {
   StatusBar,
   TouchableWithoutFeedback,
   Keyboard,
-  Alert
+  Alert,
+  TouchableOpacity
 } from 'react-native';
 
 import * as React from "react";
@@ -25,8 +26,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useRouter } from "expo-router";
 import { TextInput } from 'react-native-gesture-handler';
+import { isWeb } from '../../utils/platform';
 
 import axios from 'axios';
+import { getApiUrl } from '../../utils/apiConfig';
 
 import AppLogo from "../../assets/app_icon/in_app_logo.svg";
 import ProgressBar from "../../component/ProgressBar";
@@ -74,6 +77,20 @@ export default function page_3() {
       payload.append("location", formData.location);
       payload.append("phone_number", formData.phone_number);
   
+      // Algorithm-required fields
+      payload.append("headline", formData.headline || '');
+      payload.append("summary", formData.summary || '');
+      payload.append("courses", JSON.stringify(formData.courses || []));
+      payload.append("skills", JSON.stringify(formData.skills || []));
+      payload.append("skills_text", formData.skills_text || '');
+      payload.append("gpa", formData.gpa || '');
+      payload.append("hrs_per_week", formData.hrs_per_week || '');
+      payload.append("avail_start", formData.avail_start || '');
+      payload.append("avail_end", formData.avail_end || '');
+      if (formData.reliability) {
+        payload.append("reliability", formData.reliability);
+      }
+  
       if (formData.transcript) {
         payload.append("transcript", formData.transcript as any);
       }
@@ -82,11 +99,7 @@ export default function page_3() {
         payload.append("resume", formData.resume as any);
       }
   
-      // 192.168.10.15 (shanghai home ip address)
-      // 192.168.0.118 (msia home ip address)
-      // 172.20.10.3 (phone data ip address)
-      // 192.168.0.104 (taiping home ip address)
-      const res = await axios.post('http://localhost:8000/api/user/register/student/', payload, {
+      const res = await axios.post(getApiUrl('api/user/register/student/'), payload, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -96,11 +109,33 @@ export default function page_3() {
       router.push("/(dashboard)");
     } catch (error: any) {
       console.error("Submission error:", error.response?.data || error.message);
-      Alert.alert("Submission failed", "Please try again later.");
+      if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
+        const apiUrl = getApiUrl('api/user/register/student/');
+        Alert.alert(
+          "Connection Error",
+          `Cannot connect to backend server.\n\nPlease ensure:\n1. Backend is running\n2. Backend server is started\n3. Server URL: ${apiUrl}\n\nSee backend/README.md for instructions.`
+        );
+      } else if (error.response) {
+        Alert.alert("Submission failed", error.response.data?.detail || error.response.data?.message || "Please check your input and try again.");
+      } else {
+        Alert.alert("Submission failed", error.message || "Please try again later.");
+      }
     }
   };
   
-  const swipeUpGesture = Gesture.Pan()
+  const handleSwipeSubmit = () => {
+    if (isWeb) {
+      translateY.value = withTiming(-windowHeight, { duration: 300 }, (finished) => {
+        if (finished) {
+          handleSubmit();
+        }
+      });
+    } else {
+      handleSubmit();
+    }
+  };
+
+  const swipeUpGesture = !isWeb ? Gesture.Pan()
     .onUpdate((event) => {
       if (event.translationY < 0) {
         translateY.value = event.translationY;
@@ -120,11 +155,10 @@ export default function page_3() {
       } else {
         translateY.value = withSpring(0, { damping: 10 });
       }
-    });
+    }) : undefined;
 
-  return (
-    <GestureDetector gesture={swipeUpGesture}>
-      <Animated.View style={[styles.container, cardStyle]}>
+  const content = (
+    <Animated.View style={[styles.container, cardStyle]}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <SafeAreaView style={styles.page}>
             <StatusBar barStyle="dark-content" />
@@ -196,14 +230,30 @@ export default function page_3() {
 
             {/* FOOTER */}
             <View style={styles.footer}>
-              <View style={styles.swipe_up_container}>
-                <Text style={styles.swipe_up_text}>SWIPE UP TO FINISH REGISTRATION</Text>
-                <ArrowDown style={styles.arrow_down} width={25} height={25} />
-              </View>
+              {isWeb ? (
+                <TouchableOpacity onPress={handleSwipeSubmit} style={[styles.swipe_up_container, { cursor: 'pointer' }]}>
+                  <Text style={styles.swipe_up_text}>CLICK TO FINISH REGISTRATION</Text>
+                  <ArrowDown style={styles.arrow_down} width={25} height={25} />
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.swipe_up_container}>
+                  <Text style={styles.swipe_up_text}>SWIPE UP TO FINISH REGISTRATION</Text>
+                  <ArrowDown style={styles.arrow_down} width={25} height={25} />
+                </View>
+              )}
             </View>
           </SafeAreaView>
         </TouchableWithoutFeedback>
-      </Animated.View>
+    </Animated.View>
+  );
+
+  if (isWeb || !swipeUpGesture) {
+    return content;
+  }
+
+  return (
+    <GestureDetector gesture={swipeUpGesture}>
+      {content}
     </GestureDetector>
   );
 }

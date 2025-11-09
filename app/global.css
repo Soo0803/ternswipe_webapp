@@ -18,3 +18,46 @@ Press Ctrl + Shift + P to open the command palette, search for Open Workspace Se
 }
 
 */
+
+/* Website styles */
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure proper scrolling */
+#__next, #root, [data-reactroot] {
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Better input styling on web */
+input, textarea {
+  font-size: 16px !important; /* Prevents zoom on iOS */
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Remove default margins */
+* {
+  box-sizing: border-box;
+}
+
+/* Website-specific styles */
+@media (min-width: 768px) {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}

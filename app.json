@@ -4,30 +4,46 @@
     "slug": "ternswipe",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/banner_page/pict_1.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.weijiesooorg.ternswipe",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/banner_page/pict_2.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.weijiesooorg.ternswipe"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/banner_page/pict_1.png",
+      "name": "TernSwipe - Student & Professor Matching",
+      "shortName": "TernSwipe",
+      "lang": "en",
+      "scope": "/",
+      "themeColor": "#ffffff",
+      "backgroundColor": "#ffffff",
+      "display": "standalone",
+      "orientation": "portrait",
+      "startUrl": "/",
+      "crossorigin": "use-credentials",
+      "description": "Matchmaking app for students and professors' projects"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/banner_page/pict_1.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -43,7 +59,8 @@
       },
       "eas": {
         "projectId": "9fd56264-e956-4b49-b9ed-87147b377a15"
-      }
+      },
+      "apiUrl": "http://localhost:8000"
     },
     "owner": "weijiesoo-org"
   }

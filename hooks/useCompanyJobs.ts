@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Constants from "expo-constants";
+import { getApiUrl } from "../utils/apiConfig";
 
 type ProfessorJob = {
   id: number;
@@ -17,15 +17,6 @@ type ProfessorJob = {
   // Serializer alias fields for backward compatibility
 };
 
-function getApiBaseUrl(): string {
-  const fromConstants = (Constants?.expoConfig as any)?.extra?.apiUrl as
-    | string
-    | undefined;
-  return (
-    fromConstants || process.env.EXPO_PUBLIC_API_URL || "http://localhost:8000"
-  );
-}
-
 export function useCompanyJobs() {
   const [data, setData] = useState<ProfessorJob[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -37,15 +28,17 @@ export function useCompanyJobs() {
       setLoading(true);
       setError(null);
       try {
-        const baseUrl = getApiBaseUrl();
-        const res = await fetch(`${baseUrl}/api/user/professor/jobs/`);
+        const res = await fetch(getApiUrl('api/user/professor/jobs/'));
         if (!res.ok) {
           throw new Error(`Failed to load: ${res.status}`);
         }
         const json = (await res.json()) as ProfessorJob[];
         if (isMounted) setData(json);
       } catch (e: any) {
-        if (isMounted) setError(e);
+        if (isMounted) {
+          setError(e);
+          console.error('Error fetching professor jobs:', e);
+        }
       } finally {
         if (isMounted) setLoading(false);
       }

@@ -85,7 +85,7 @@ export default function page_2() {
           <Pressable onPress ={() => router.push("/(student_sign_up)")}>
             <AntDesign name="leftcircleo" size={hp(5)} color="#A5CBE1"/>
           </Pressable>
-          <Pressable onPress ={() => router.push("/(student_sign_up)/page_3")}>
+          <Pressable onPress ={() => router.push("/(student_sign_up)/page_4")}>
             <AntDesign name="rightcircleo" size={hp(5)} color="#A5CBE1"/>
           </Pressable>
         </View>

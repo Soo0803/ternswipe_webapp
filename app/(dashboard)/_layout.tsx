@@ -64,6 +64,18 @@ export default function DashboardLayout() {
                     )
                 }}
             />
+            <Tabs.Screen 
+                name="matches" 
+                options={{ 
+                    href: null, // Hide from tab bar, accessible via navigation
+                }}
+            />
+            <Tabs.Screen 
+                name="project-matches" 
+                options={{ 
+                    href: null, // Hide from tab bar, accessible via navigation
+                }}
+            />
         </Tabs>
     );
 }

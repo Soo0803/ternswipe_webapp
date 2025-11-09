@@ -16,6 +16,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import AntDesign from "@expo/vector-icons/AntDesign";
 import UploadFileButton from '../../component/UploadFileButton';
 import { useCompanyForm } from '../../context/companyFormContext';
+import SkillSelector from '../../component/SkillSelector';
 
 // Import components and assets
 import AppLogo from "../../assets/app_icon/in_app_logo.svg";
@@ -55,8 +56,8 @@ return (
           <UploadFileButton onFileSelected={(file: File) => setFormData({ ...formData, lab_third_image: file })} />
 
           {/* Dynamic Research Projects */}
-          {(() => {
-            const projects = formData.projects && formData.projects.length > 0 ? formData.projects : [{ title: '', description: '' } as any];
+            {(() => {
+            const projects = formData.projects && formData.projects.length > 0 ? formData.projects : [{ title: '', description: '', required_skills: [], hrs_per_week: '', start_date: '', end_date: '', capacity: '1' } as any];
             return projects.map((proj, idx) => (
               <View key={idx} style={{ width: '100%', marginBottom: hp(2) }}>
                 <Text style={styles.title_text}>{`Add Research Project ${idx + 1}`}</Text>
@@ -70,7 +71,7 @@ return (
                     value={formData.projects[idx]?.title || ''}
                     onChangeText={(text) => {
                       const next = [...(formData.projects || [])];
-                      if (!next[idx]) next[idx] = { title: '', description: '' } as any;
+                      if (!next[idx]) next[idx] = { title: '', description: '', required_skills: [], hrs_per_week: '', start_date: '', end_date: '', capacity: '1' } as any;
                       next[idx].title = text;
                       setFormData({ ...formData, projects: next });
                     }}
@@ -86,7 +87,7 @@ return (
                     value={formData.projects[idx]?.description || ''}
                     onChangeText={(text) => {
                       const next = [...(formData.projects || [])];
-                      if (!next[idx]) next[idx] = { title: '', description: '' } as any;
+                      if (!next[idx]) next[idx] = { title: '', description: '', required_skills: [], hrs_per_week: '', start_date: '', end_date: '', capacity: '1' } as any;
                       next[idx].description = text;
                       setFormData({ ...formData, projects: next });
                     }}
@@ -102,24 +103,105 @@ return (
                     value={formData.projects[idx]?.modality || ''}
                     onChangeText={(text) => {
                       const next = [...(formData.projects || [])];
-                      if (!next[idx]) next[idx] = { title: '', description: '' } as any;
+                      if (!next[idx]) next[idx] = { title: '', description: '', required_skills: [], hrs_per_week: '', start_date: '', end_date: '', capacity: '1' } as any;
                       next[idx].modality = text as any;
                       setFormData({ ...formData, projects: next });
                     }}
                   />
                 </View>
 
-          <View style={styles.input_form_wrap}>
+                <View style={styles.input_form_wrap}>
                   <Text style={styles.text}>Project Location</Text>
-            <TextInput
+                  <TextInput
                     placeholder="e.g., Xuhui, Shanghai"
-              style={styles.input_text}
-              keyboardType="default"
+                    style={styles.input_text}
+                    keyboardType="default"
                     value={formData.projects[idx]?.location || ''}
                     onChangeText={(text) => {
                       const next = [...(formData.projects || [])];
-                      if (!next[idx]) next[idx] = { title: '', description: '' } as any;
+                      if (!next[idx]) next[idx] = { title: '', description: '', required_skills: [], hrs_per_week: '', start_date: '', end_date: '', capacity: '1' } as any;
                       next[idx].location = text as any;
+                      setFormData({ ...formData, projects: next });
+                    }}
+                  />
+                </View>
+
+                {/* Required Skills */}
+                <View style={styles.input_form_wrap}>
+                  <Text style={styles.text}>Required Skills *</Text>
+                  <SkillSelector
+                    selectedSkills={formData.projects[idx]?.required_skills || []}
+                    onSkillsChange={(skills) => {
+                      const next = [...(formData.projects || [])];
+                      if (!next[idx]) next[idx] = { title: '', description: '', required_skills: [], hrs_per_week: '', start_date: '', end_date: '', capacity: '1' } as any;
+                      next[idx].required_skills = skills;
+                      setFormData({ ...formData, projects: next });
+                    }}
+                    label=""
+                  />
+                </View>
+
+                {/* Hours per Week */}
+                <View style={styles.input_form_wrap}>
+                  <Text style={styles.text}>Hours per Week *</Text>
+                  <TextInput
+                    placeholder="e.g., 15"
+                    style={styles.input_text}
+                    keyboardType="numeric"
+                    value={formData.projects[idx]?.hrs_per_week || ''}
+                    onChangeText={(text) => {
+                      const next = [...(formData.projects || [])];
+                      if (!next[idx]) next[idx] = { title: '', description: '', required_skills: [], hrs_per_week: '', start_date: '', end_date: '', capacity: '1' } as any;
+                      next[idx].hrs_per_week = text;
+                      setFormData({ ...formData, projects: next });
+                    }}
+                  />
+                </View>
+
+                {/* Start Date */}
+                <View style={styles.input_form_wrap}>
+                  <Text style={styles.text}>Start Date</Text>
+                  <TextInput
+                    placeholder="YYYY-MM-DD (e.g., 2024-09-01)"
+                    style={styles.input_text}
+                    value={formData.projects[idx]?.start_date || ''}
+                    onChangeText={(text) => {
+                      const next = [...(formData.projects || [])];
+                      if (!next[idx]) next[idx] = { title: '', description: '', required_skills: [], hrs_per_week: '', start_date: '', end_date: '', capacity: '1' } as any;
+                      next[idx].start_date = text;
+                      setFormData({ ...formData, projects: next });
+                    }}
+                  />
+                </View>
+
+                {/* End Date */}
+                <View style={styles.input_form_wrap}>
+                  <Text style={styles.text}>End Date</Text>
+                  <TextInput
+                    placeholder="YYYY-MM-DD (e.g., 2024-12-31)"
+                    style={styles.input_text}
+                    value={formData.projects[idx]?.end_date || ''}
+                    onChangeText={(text) => {
+                      const next = [...(formData.projects || [])];
+                      if (!next[idx]) next[idx] = { title: '', description: '', required_skills: [], hrs_per_week: '', start_date: '', end_date: '', capacity: '1' } as any;
+                      next[idx].end_date = text;
+                      setFormData({ ...formData, projects: next });
+                    }}
+                  />
+                </View>
+
+                {/* Capacity */}
+                <View style={styles.input_form_wrap}>
+                  <Text style={styles.text}>Number of Students Needed *</Text>
+                  <TextInput
+                    placeholder="e.g., 2"
+                    style={styles.input_text}
+                    keyboardType="numeric"
+                    value={formData.projects[idx]?.capacity || '1'}
+                    onChangeText={(text) => {
+                      const next = [...(formData.projects || [])];
+                      if (!next[idx]) next[idx] = { title: '', description: '', required_skills: [], hrs_per_week: '', start_date: '', end_date: '', capacity: '1' } as any;
+                      next[idx].capacity = text || '1';
                       setFormData({ ...formData, projects: next });
                     }}
                   />
@@ -133,7 +215,7 @@ return (
               onPress={() => {
                 const curr = formData.projects || [];
                 if (curr.length >= 5) return; // max 5
-                const next = [...curr, { title: '', description: '' } as any];
+                const next = [...curr, { title: '', description: '', required_skills: [], hrs_per_week: '', start_date: '', end_date: '', capacity: '1' } as any];
                 setFormData({ ...formData, projects: next });
               }}
               disabled={(formData.projects || []).length >= 5}

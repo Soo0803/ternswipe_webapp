@@ -16,6 +16,17 @@ type FormData = {
   username: string;
   email: string;
   password: string;
+  // Algorithm-required fields
+  headline: string;
+  summary: string;
+  courses: string[]; // List of courses
+  skills: string[]; // List of skills
+  skills_text: string; // Text description of skills
+  gpa: string; // GPA as string (will be normalized on backend)
+  hrs_per_week: string; // Hours available per week
+  avail_start: string; // Availability start date (ISO format)
+  avail_end: string; // Availability end date (ISO format)
+  reliability?: string; // Optional reliability score
 };
 
 type StudentFormContextType = {
@@ -54,6 +65,17 @@ export const StudentFormProvider = ({ children }: Props) => {
     password: '',
     transcript: null,
     resume: null,
+    // Algorithm fields
+    headline: '',
+    summary: '',
+    courses: [],
+    skills: [],
+    skills_text: '',
+    gpa: '',
+    hrs_per_week: '',
+    avail_start: '',
+    avail_end: '',
+    reliability: '',
   });
 
   return (

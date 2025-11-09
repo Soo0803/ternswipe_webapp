@@ -6,24 +6,21 @@ import {
   StatusBar,
   Pressable,
   ScrollView,
-  FlatList,
   Image,
   ImageBackground,
+  TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
-
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Feather from '@expo/vector-icons/Feather';
-import AppIcon from "../../assets/app_icon/in_app_logo.svg"
-import { useCompanyJobs } from "../../hooks/useCompanyJobs";
-// import News1 from "../../assets/home_page/news_section/news_1.png";
-// import News2 from "../../assets/home_page/news_section/news_2.png";
-// import News3 from "../../assets/home_page/news_section/news_3.png";
-//import { FlatList } from 'react-native-gesture-handler';
+import { WebsiteLayout } from '../../components/WebsiteLayout';
+import { isWeb } from '../../utils/platform';
+import { getFontSize, getPadding } from '../../utils/responsive';
+import { useStudentMatches } from '../../hooks/useStudentMatches';
+import { useAllProjects } from '../../hooks/useAllProjects';
+import { Button } from '../../components/Button';
+import AppIcon from "../../assets/app_icon/in_app_logo.svg";
 
 const newsItems = [
   {
@@ -40,356 +37,608 @@ const newsItems = [
   },
 ];
 
-const urgentResearchhiring = [
-  {
-    title: "Machine Learning research to assist medical diagnosis",
-    faculty : "Biomedical Engineering school",
-    pay: "certiciation",
-    image: require("../../assets/home_page/part_time/part_time_1.png"),
-    link: "/(daily_part_time)",
-  },
-
-  {
-    title: "Computer Vision research for autonomous vehicles",
-    area : "Mechanical Engineering school",
-    pay: "scholarship",
-    image: require("../../assets/home_page/part_time/part_time_2.png"),
-    link: "/(daily_part_time)",
-  },
-
-  {
-    title: "semiconductor chips design",
-    area : "SJTU GC",
-    pay: "$20 - 30/hour",
-    image: require("../../assets/home_page/part_time/part_time_3.png"),
-    link: "/(daily_part_time)",
-  },
-
-  {
-    title: "Football Coaching",
-    area : "Yangpu",
-    pay: "$18 - 25/hour",
-    image: require("./../../assets/home_page/part_time/part_time_4.png"),
-    link: "/(daily_part_time)",
-  },
-
-  {
-    title: "Swimming Coaching",
-    area : "Huangpu",
-    pay: "$22 - 35/hour",
-    image: require("./../../assets/home_page/part_time/part_time_5.png"),
-    link: "/(daily_part_time)",
-  },
-];
-
-const dailyRecommendations = [
-  {
-    title: "Mechanical Engineering (30)",
-    duration: "3 - 7.5 months",
-    starting: "April 2024 - August 2025",
-    salary: "Certification + $1000 - 1500",
-    color: "#1a79b0",
-  },
-  {
-    title: "Electrical Engineering (10)",
-    duration: "3 - 5 months",
-    starting: "April - August 2025",
-    salary: "$1000 - 1200",
-    color: "#559ac3",
-  },
-  {
-    title: "Accountancy (50)",
-    duration: "3 - 12 months",
-    starting: "April - December 2025",
-    salary: "$800 - 1200",
-    color: "#4569c2",
-  },
-];
-
-export default function home_dashboard(){
+export default function home_dashboard() {
   const router = useRouter();
-  return(
-    <SafeAreaView style={styles.home_page}>
-      <StatusBar barStyle="dark-content"/>
+  const { data: matches, loading: matchesLoading } = useStudentMatches(6);
+  const { data: projects, loading: projectsLoading } = useAllProjects();
 
-      <View style = {styles.header}>
-        {/* For Header Purpose */}
-        <Pressable onPress = {() => router.push("/(dashboard)")}>
-          <AppIcon/>
-        </Pressable>
-        <Pressable onPress = {() => router.push("/(settings)")}>
-          <Feather name="settings" size={28} color="black"/>
-        </Pressable>
-      </View>
-
-      <View style = {styles.news_container}>
-        {/* News Title Section */}
-        <Pressable onPress = {() => router.push("/")}>
-          <Text style = {styles.section_title}>NEWS</Text>
-        </Pressable>
-
-        {/* Auto Horizontal Scroll for NEWS section */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalDeck}>
-        {newsItems.map((news, idx) => (
-            <ImageBackground
-            key={idx}
-            style={styles.newsCard}
-            resizeMode="cover"
-            source={news.image}
-            >
-            <Text style={styles.newsText}>{news.title}</Text>
-            </ImageBackground>
-        ))}
-        </ScrollView>
-
-        {/* FLATLIST FURTHER DEVELOPMENT IS NEEDED */}
-        
-      </View>
-
-      <View style = {styles.daily_part_time_container}>
-        {/* Title for Daily Part - Time Section */}
-        <View style = {styles.titles_container}>
-          <Text style = {styles.section_title}>Urgent Project Researcher Hiring</Text>
-          <Pressable style = {styles.see_more_container} onPress = {() => router.push("/(daily_part_time)")}>
-            <Text style = {styles.see_more}>See More</Text>
-            <MaterialCommunityIcons name="greater-than" size={15} color= "#7da0ca"/>
-          </Pressable>
-        </View>
-
-        {/* Horizontal Scroll View for Daily Part - Time Container */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalDeck}>
-          {urgentResearchhiring.map((job, idx) => (
-            // Try use job.link or need further development since we want in a way when a user clicked the card it direct user to the page that relates to the information
-            <Pressable key={idx} style = {styles.see_more_container} onPress = {() => router.push("/(project_and_research)")}> 
-              <View key={idx} style={styles.partTimeCard}>
-                  <Image
-                      style={styles.imageThumb}
-                      resizeMode="cover"
-                      source={job.image}
-                  />
-                  <View style={styles.cardTextBlock}>
-                      <Text style={styles.cardTitle}>{job.title}</Text>
-                      <View style={styles.cardDetailsRow}>
-                      <Text style={styles.detailLabel}>Area</Text>
-                      <Text style={styles.detailText}>{job.area}</Text>
-                      </View>
-
-                      <View style={styles.cardDetailsRow}>
-                        <Text style={styles.detailText}>{(job as any).job_internship_vancancy || "Vacancy"} </Text>
-                        <View style={styles.detailRating}>
-                          {/* <Materialsymbolslightcreditscoreoutlinerounded width={18} height={18} /> */}
-                          <Text style={styles.detailText}>+12</Text>
-                        </View>
-                      </View>
-
-
-                  </View>
-              </View>
+  if (isWeb) {
+    return (
+      <WebsiteLayout showHeader={false}>
+        <View style={styles.webContainer}>
+          {/* Header */}
+          <View style={styles.webHeader}>
+            <Pressable onPress={() => router.push("/(dashboard)")}>
+              <AppIcon width={120} height={40} />
             </Pressable>
-          ))}
-          </ScrollView>
+            <View style={styles.webNav}>
+              <TouchableOpacity 
+                onPress={() => router.push("/(dashboard)/matches")}
+                style={styles.navButton}
+              >
+                <Ionicons name="search" size={20} color="#7da0ca" />
+                <Text style={styles.navButtonText}>My Matches</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={() => router.push("/(project_and_research)")}
+                style={styles.navButton}
+              >
+                <Ionicons name="briefcase" size={20} color="#7da0ca" />
+                <Text style={styles.navButtonText}>All Projects</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={() => router.push("/(dashboard)/profile")}
+                style={styles.navButton}
+              >
+                <Ionicons name="person" size={20} color="#7da0ca" />
+                <Text style={styles.navButtonText}>Profile</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-        {/* Further Development Flatlist Function */}
+          {/* Hero Section */}
+          <View style={styles.heroSection}>
+            <Text style={styles.heroTitle}>Welcome to Your Dashboard</Text>
+            <Text style={styles.heroSubtitle}>
+              Discover research opportunities matched to your skills and interests
+            </Text>
+            <View style={styles.heroButtons}>
+              <Button
+                title="View My Matches"
+                onPress={() => router.push("/(dashboard)/matches")}
+                style={styles.heroButton}
+              />
+              <Button
+                title="Browse All Projects"
+                onPress={() => router.push("/(project_and_research)")}
+                variant="outline"
+                style={styles.heroButton}
+              />
+            </View>
+          </View>
+
+          {/* Top Matches Section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Your Top Matches</Text>
+              <TouchableOpacity onPress={() => router.push("/(dashboard)/matches")}>
+                <Text style={styles.seeAllLink}>See All →</Text>
+              </TouchableOpacity>
+            </View>
+            
+            {matchesLoading ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#7da0ca" />
+              </View>
+            ) : matches.length > 0 ? (
+              <ScrollView 
+                horizontal 
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.horizontalScroll}
+              >
+                {matches.map((match) => (
+                  <TouchableOpacity
+                    key={match.project_id}
+                    style={styles.matchCard}
+                    onPress={() => router.push(`/(project_and_research)/${match.project_id}`)}
+                  >
+                    <View style={styles.matchScoreBadge}>
+                      <Text style={styles.matchScoreText}>
+                        {Math.round(match.score * 100)}%
+                      </Text>
+                    </View>
+                    <Text style={styles.matchCardTitle} numberOfLines={2}>
+                      {match.title}
+                    </Text>
+                    <Text style={styles.matchCardProf} numberOfLines={1}>
+                      {match.professor_name}
+                    </Text>
+                    <Text style={styles.matchCardDesc} numberOfLines={3}>
+                      {match.description || 'No description'}
+                    </Text>
+                    <View style={styles.matchCardFooter}>
+                      <View style={styles.matchCardStat}>
+                        <Ionicons name="checkmark-circle" size={14} color="#4caf50" />
+                        <Text style={styles.matchCardStatText}>
+                          {Math.round(match.skill_coverage * 100)}%
+                        </Text>
+                      </View>
+                      <Text style={styles.matchCardView}>View →</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            ) : (
+              <View style={styles.emptyState}>
+                <Ionicons name="search-outline" size={48} color="#ccc" />
+                <Text style={styles.emptyText}>No matches yet</Text>
+                <Text style={styles.emptySubtext}>
+                  Complete your profile to get matched with projects
+                </Text>
+              </View>
+            )}
+          </View>
+
+          {/* All Projects Section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Available Projects</Text>
+              <TouchableOpacity onPress={() => router.push("/(project_and_research)")}>
+                <Text style={styles.seeAllLink}>See All →</Text>
+              </TouchableOpacity>
+            </View>
+
+            {projectsLoading ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#7da0ca" />
+              </View>
+            ) : projects.length > 0 ? (
+              <View style={styles.projectsGrid}>
+                {projects.slice(0, 6).map((project) => (
+                  <TouchableOpacity
+                    key={project.id}
+                    style={styles.projectCard}
+                    onPress={() => router.push(`/(project_and_research)/${project.id}`)}
+                  >
+                    <Text style={styles.projectCardTitle} numberOfLines={2}>
+                      {project.title}
+                    </Text>
+                    <Text style={styles.projectCardDesc} numberOfLines={3}>
+                      {project.description || 'No description'}
+                    </Text>
+                    {project.required_skills && project.required_skills.length > 0 && (
+                      <View style={styles.projectSkills}>
+                        {project.required_skills.slice(0, 3).map((skill, idx) => (
+                          <View key={idx} style={styles.projectSkillTag}>
+                            <Text style={styles.projectSkillText}>{skill}</Text>
+                          </View>
+                        ))}
+                        {project.required_skills.length > 3 && (
+                          <Text style={styles.moreSkillsText}>
+                            +{project.required_skills.length - 3}
+                          </Text>
+                        )}
+                      </View>
+                    )}
+                    <View style={styles.projectCardFooter}>
+                      <Text style={styles.projectCapacity}>
+                        {project.capacity} position{project.capacity !== 1 ? 's' : ''}
+                      </Text>
+                      <Ionicons name="arrow-forward" size={16} color="#7da0ca" />
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : (
+              <View style={styles.emptyState}>
+                <Ionicons name="briefcase-outline" size={48} color="#ccc" />
+                <Text style={styles.emptyText}>No projects available</Text>
+              </View>
+            )}
+          </View>
+
+          {/* News Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Latest News</Text>
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.horizontalScroll}
+            >
+              {newsItems.map((news, idx) => (
+                <ImageBackground
+                  key={idx}
+                  style={styles.newsCard}
+                  resizeMode="cover"
+                  source={news.image}
+                >
+                  <View style={styles.newsOverlay}>
+                    <Text style={styles.newsText}>{news.title}</Text>
+                  </View>
+                </ImageBackground>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </WebsiteLayout>
+    );
+  }
+
+  // Mobile version - keep original design with updates
+  return (
+    <SafeAreaView style={styles.mobileContainer}>
+      <StatusBar barStyle="dark-content"/>
+      <View style={styles.mobileHeader}>
+        <Pressable onPress={() => router.push("/(dashboard)")}>
+          <AppIcon width={65} height={54} />
+        </Pressable>
+        <Pressable onPress={() => router.push("/(settings)")}>
+          <Ionicons name="settings" size={28} color="black"/>
+        </Pressable>
       </View>
 
-      <View style = {styles.daily_recommendation_container}>
-        {/* Title for Daily Recommendation Section */}
-        <View style = {styles.titles_container}>
-          <Text style = {styles.section_title}>Research Project Opportunities</Text>
-          <Pressable style = {styles.see_more_container} onPress = {() => router.push("/(swiping_page)")}>
-            <Text style = {styles.see_more}>See More</Text>
-            <MaterialCommunityIcons name="greater-than" size={12} color= "#7da0ca" />
-          </Pressable>
+      <ScrollView style={styles.mobileScroll} contentContainerStyle={styles.mobileScrollContent}>
+        {/* News Section */}
+        <View style={styles.mobileNewsContainer}>
+          <Text style={styles.mobileSectionTitle}>NEWS</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {newsItems.map((news, idx) => (
+              <ImageBackground
+                key={idx}
+                style={styles.mobileNewsCard}
+                resizeMode="cover"
+                source={news.image}
+              >
+                <Text style={styles.mobileNewsText}>{news.title}</Text>
+              </ImageBackground>
+            ))}
+          </ScrollView>
         </View>
 
-        {/* Horizontal Scroll View for Daily Recommendation Container */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalDeck}>
-        {dailyRecommendations.map((item, idx) => (
-          <Pressable key = {idx} style = {styles.see_more_container} onPress = {() => router.push("/(swiping_page)")}>
-            <View key={idx} style={[styles.recommendationCard, { backgroundColor: item.color }]}>
-              <Text style={styles.cardTitle}>{item.title}</Text>
-
-              <View style = {styles.duration_wrap}>
-                <Text style={styles.detailText}>Duration</Text>
-                <Text style={styles.detailText}>{item.duration}</Text>
-              </View>
-
-              <View style = {styles.starting_wrap}>
-                <Text style={styles.detailText}>Starting</Text>
-                <Text style={styles.detailText}>{item.starting}</Text>
-              </View>
-
-              <View style = {styles.salary_wrap}>
-                <Text style={styles.detailText}>Salary</Text>
-                <Text style={styles.detailText}>{item.salary}</Text>
-              </View>
-            </View>
-          </Pressable>
-        ))}
-        </ScrollView>
-
-        {/* FLATLIST FURTHER DEVELOPMENT IS NEEDED */}
-
-      </View>
+        {/* Matches Section */}
+        <View style={styles.mobileSection}>
+          <View style={styles.mobileSectionHeader}>
+            <Text style={styles.mobileSectionTitle}>Your Matches</Text>
+            <TouchableOpacity onPress={() => router.push("/(dashboard)/matches")}>
+              <Text style={styles.mobileSeeMore}>See More →</Text>
+            </TouchableOpacity>
+          </View>
+          {matchesLoading ? (
+            <ActivityIndicator size="small" color="#7da0ca" />
+          ) : matches.length > 0 ? (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {matches.slice(0, 3).map((match) => (
+                <TouchableOpacity
+                  key={match.project_id}
+                  style={styles.mobileMatchCard}
+                  onPress={() => router.push(`/(project_and_research)/${match.project_id}`)}
+                >
+                  <Text style={styles.mobileMatchTitle}>{match.title}</Text>
+                  <Text style={styles.mobileMatchScore}>
+                    {Math.round(match.score * 100)}% Match
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          ) : (
+            <Text style={styles.mobileEmptyText}>No matches yet</Text>
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  home_page:{
-    backgroundColor: "#fff",
-    paddingHorizontal: 31,
-    justifyContent: "center",
-    height:"100%",
-    width: "100%",
+  // Web styles
+  webContainer: {
+    width: '100%',
+    paddingBottom: getPadding(60),
   },
-
-  header:{
-    flex:0.6,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems:"center"
+  webHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: getPadding(24),
+    paddingVertical: getPadding(20),
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
-
-  news_container: {
-    alignItems:"center"
+  webNav: {
+    flexDirection: 'row',
+    gap: getPadding(16),
   },
-
-  daily_part_time_container: {
-    paddingTop: hp(1.5),
-    flexDirection: "column",
-    justifyContent: "center",
-  },
-
-  titles_container:{
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems:"center",
-  },
-
-  see_more :{
-    alignItems:"center",
-    justifyContent : "center",
-    fontFamily: "Inter-Regular",
-    textDecorationLine: "underline",
-    color: "#7da0ca",
-    fontSize: 12,
-  },
-
-  see_more_container:{
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 5,
-  },
-
-  daily_recommendation_container: {
-    flexDirection: "column",
-    justifyContent: "center",
-    paddingTop: hp(1.5),
-  },
-
-  section_title:{
-    fontWeight: "bold",
-    fontSize: 16,
-    //fontFamily: "calibri",
-    //fontFamily: "Inter-Regular",
-  },
-
-  newsCard: {
-    width: wp(80),
-    height: wp(35),
-    borderRadius: 10,
-    overflow: "hidden",
-    padding: 10,
-    justifyContent: "flex-end",
-    backgroundColor: "#ccc",
-  },
-
-  newsText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-
-  horizontalDeck: {
-    paddingTop: hp(0.5),
-    borderRadius: 10,
-    paddingRight:10,
-    gap: wp(3.8),
-  },
-
-  partTimeCard: {
-    flexDirection: "row",
-    backgroundColor: "#304830",
-    borderRadius: 10,
-    height: wp(35),
-    width: wp(80),
-    //overflow: "hidden",
-  },
-
-  imageThumb: {
-    width: 110,
-    height: "100%",
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-  },
-
-  cardTextBlock: {
-    padding: 5,
-    flex: 1,
-    justifyContent: "space-between",
-  },
-  cardTitle: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 18,
-  },
-
-  cardDetailsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-
-  detailLabel: {
-    color: "#ccc",
-    fontSize: 16,
-  },
-  detailText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-
-  detailRating: {
-    flexDirection: "row",
-    alignItems: "center",
+  navButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
+    paddingHorizontal: getPadding(12),
+    paddingVertical: getPadding(8),
   },
-
-  recommendationCard: {
+  navButtonText: {
+    fontSize: getFontSize(14),
+    color: '#7da0ca',
+    fontWeight: '500',
+  },
+  heroSection: {
+    paddingVertical: getPadding(60),
+    paddingHorizontal: getPadding(24),
+    backgroundColor: '#f5f7fa',
+    alignItems: 'center',
+  },
+  heroTitle: {
+    fontSize: getFontSize(40),
+    fontWeight: '700',
+    color: '#1a1a1a',
+    marginBottom: getPadding(16),
+    textAlign: 'center',
+  },
+  heroSubtitle: {
+    fontSize: getFontSize(18),
+    color: '#666',
+    marginBottom: getPadding(32),
+    textAlign: 'center',
+    maxWidth: 600,
+  },
+  heroButtons: {
+    flexDirection: 'row',
+    gap: getPadding(16),
+  },
+  heroButton: {
+    minWidth: 180,
+  },
+  section: {
+    paddingVertical: getPadding(40),
+    paddingHorizontal: getPadding(24),
+    maxWidth: 1200,
+    marginHorizontal: 'auto',
+    width: '100%',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: getPadding(24),
+  },
+  sectionTitle: {
+    fontSize: getFontSize(28),
+    fontWeight: '700',
+    color: '#1a1a1a',
+  },
+  seeAllLink: {
+    fontSize: getFontSize(14),
+    color: '#7da0ca',
+    fontWeight: '600',
+  },
+  loadingContainer: {
+    paddingVertical: getPadding(40),
+    alignItems: 'center',
+  },
+  horizontalScroll: {
+    gap: getPadding(16),
+    paddingRight: getPadding(24),
+  },
+  matchCard: {
+    width: 320,
+    backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 8,
-    width: wp(80),
-    height: wp(48),
-    justifyContent: "space-between",
-    //alignItems: "center",
+    padding: getPadding(20),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
-
-  salary_wrap:{
-    paddingVertical: 3,
-    paddingHorizontal: 5,
-    backgroundColor:"gray",
-    flexDirection:"row",
-    justifyContent: "space-between",
-    borderRadius: 5,
-    //alignItems: "center",
+  matchScoreBadge: {
+    backgroundColor: '#7da0ca',
+    borderRadius: 8,
+    paddingVertical: getPadding(6),
+    paddingHorizontal: getPadding(12),
+    alignSelf: 'flex-start',
+    marginBottom: getPadding(12),
   },
-
-  starting_wrap:{
-    paddingBottom: 2,
+  matchScoreText: {
+    fontSize: getFontSize(16),
+    fontWeight: '700',
+    color: '#fff',
   },
-
-  duration_wrap:{
+  matchCardTitle: {
+    fontSize: getFontSize(18),
+    fontWeight: '600',
+    color: '#1a1a1a',
+    marginBottom: getPadding(8),
+  },
+  matchCardProf: {
+    fontSize: getFontSize(14),
+    color: '#666',
+    marginBottom: getPadding(12),
+  },
+  matchCardDesc: {
+    fontSize: getFontSize(14),
+    color: '#666',
+    lineHeight: getFontSize(20),
+    marginBottom: getPadding(16),
+  },
+  matchCardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: getPadding(16),
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  matchCardStat: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  matchCardStatText: {
+    fontSize: getFontSize(12),
+    color: '#666',
+  },
+  matchCardView: {
+    fontSize: getFontSize(14),
+    color: '#7da0ca',
+    fontWeight: '600',
+  },
+  projectsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: getPadding(16),
+  },
+  projectCard: {
+    flex: 1,
+    minWidth: 280,
+    maxWidth: 380,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: getPadding(20),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  projectCardTitle: {
+    fontSize: getFontSize(18),
+    fontWeight: '600',
+    color: '#1a1a1a',
+    marginBottom: getPadding(12),
+  },
+  projectCardDesc: {
+    fontSize: getFontSize(14),
+    color: '#666',
+    lineHeight: getFontSize(20),
+    marginBottom: getPadding(16),
+  },
+  projectSkills: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: getPadding(6),
+    marginBottom: getPadding(16),
+  },
+  projectSkillTag: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 6,
+    paddingHorizontal: getPadding(8),
+    paddingVertical: getPadding(4),
+  },
+  projectSkillText: {
+    fontSize: getFontSize(12),
+    color: '#333',
+  },
+  moreSkillsText: {
+    fontSize: getFontSize(12),
+    color: '#999',
+    alignSelf: 'center',
+  },
+  projectCardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: getPadding(16),
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  projectCapacity: {
+    fontSize: getFontSize(14),
+    color: '#666',
+  },
+  emptyState: {
+    paddingVertical: getPadding(60),
+    alignItems: 'center',
+  },
+  emptyText: {
+    marginTop: getPadding(16),
+    fontSize: getFontSize(18),
+    fontWeight: '600',
+    color: '#333',
+  },
+  emptySubtext: {
+    marginTop: getPadding(8),
+    fontSize: getFontSize(14),
+    color: '#666',
+    textAlign: 'center',
+  },
+  newsCard: {
+    width: 400,
+    height: 200,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginRight: getPadding(16),
+  },
+  newsOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+    padding: getPadding(16),
+  },
+  newsText: {
+    color: '#fff',
+    fontSize: getFontSize(16),
+    fontWeight: '600',
+  },
+  // Mobile styles
+  mobileContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  mobileHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: getPadding(20),
+    paddingVertical: getPadding(16),
+  },
+  mobileScroll: {
+    flex: 1,
+  },
+  mobileScrollContent: {
+    paddingBottom: getPadding(20),
+  },
+  mobileNewsContainer: {
+    paddingHorizontal: getPadding(20),
+    marginBottom: getPadding(20),
+  },
+  mobileSection: {
+    paddingHorizontal: getPadding(20),
+    marginBottom: getPadding(20),
+  },
+  mobileSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: getPadding(12),
+  },
+  mobileSectionTitle: {
+    fontSize: getFontSize(18),
+    fontWeight: '700',
+    color: '#1a1a1a',
+  },
+  mobileSeeMore: {
+    fontSize: getFontSize(14),
+    color: '#7da0ca',
+  },
+  mobileNewsCard: {
+    width: 280,
+    height: 150,
+    borderRadius: 10,
+    marginRight: getPadding(12),
+    justifyContent: 'flex-end',
+    padding: getPadding(12),
+  },
+  mobileNewsText: {
+    color: '#fff',
+    fontSize: getFontSize(14),
+    fontWeight: '600',
+  },
+  mobileMatchCard: {
+    width: 200,
+    backgroundColor: '#f5f7fa',
+    borderRadius: 10,
+    padding: getPadding(16),
+    marginRight: getPadding(12),
+  },
+  mobileMatchTitle: {
+    fontSize: getFontSize(16),
+    fontWeight: '600',
+    color: '#1a1a1a',
+    marginBottom: getPadding(8),
+  },
+  mobileMatchScore: {
+    fontSize: getFontSize(14),
+    color: '#7da0ca',
+    fontWeight: '600',
+  },
+  mobileEmptyText: {
+    fontSize: getFontSize(14),
+    color: '#999',
+    textAlign: 'center',
+    paddingVertical: getPadding(20),
   },
 });

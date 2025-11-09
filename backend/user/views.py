@@ -2,9 +2,11 @@ from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, StudentProfileSerializer, ProfessorProfileSerializer, ProfessorProjectSerializer
 from .models import Student, StudentProfile, ProfessorProfile, Professor, ProfessorProject
 from rest_framework.authtoken.models import Token
+from .matching import get_student_matches, get_project_matches
 
 
 
@@ -35,6 +37,22 @@ class StudentRegisterView(APIView):
             "role": "STUDENT",  # Ensure role is set
         }
 
+        # Parse JSON fields if they come as strings
+        import json
+        courses = request.data.get("courses")
+        if isinstance(courses, str):
+            try:
+                courses = json.loads(courses)
+            except:
+                courses = []
+        
+        skills = request.data.get("skills")
+        if isinstance(skills, str):
+            try:
+                skills = json.loads(skills)
+            except:
+                skills = []
+
         profile_data = {
             "given_name": request.data.get("given_name"),
             "middle_name": request.data.get("middle_name"),
@@ -48,6 +66,17 @@ class StudentRegisterView(APIView):
             "phone_number": request.data.get("phone_number"),
             "transcript": request.FILES.get("transcript"),
             "resume": request.FILES.get("resume"),
+            # Algorithm fields
+            "headline": request.data.get("headline"),
+            "summary": request.data.get("summary"),
+            "courses": courses if courses else [],
+            "skills": skills if skills else [],
+            "skills_text": request.data.get("skills_text"),
+            "gpa": request.data.get("gpa"),
+            "hrs_per_week": request.data.get("hrs_per_week"),
+            "avail_start": request.data.get("avail_start"),
+            "avail_end": request.data.get("avail_end"),
+            "reliability": request.data.get("reliability"),
         }
 
         user_serializer = UserSerializer(data=user_data)
@@ -113,12 +142,27 @@ class ProfessorRegisterView(APIView):
                                 projects = []
                         if isinstance(projects, list):
                             for p in projects:
+                                # Parse JSON fields if they come as strings
+                                required_skills = p.get('required_skills', [])
+                                if isinstance(required_skills, str):
+                                    try:
+                                        required_skills = json.loads(required_skills)
+                                    except:
+                                        required_skills = []
+                                
                                 ProfessorProject.objects.create(
                                     profile=profile,
                                     title=p.get('title', ''),
                                     description=p.get('description', ''),
                                     modality=p.get('modality', None),
                                     location=p.get('location', None),
+                                    # Algorithm fields
+                                    required_skills=required_skills if required_skills else [],
+                                    hrs_per_week=p.get('hrs_per_week'),
+                                    start_date=p.get('start_date'),
+                                    end_date=p.get('end_date'),
+                                    capacity=p.get('capacity', 1),
+                                    is_open=True,
                                 )
                     return Response({"message": "Professor registered successfully"}, status=status.HTTP_201_CREATED)
 
@@ -157,3 +201,64 @@ class ProfessorProjectListCreateAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StudentMatchesAPIView(APIView):
+    """Get matching projects for a student"""
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        user = request.user
+        limit = int(request.query_params.get('limit', 20))
+        
+        try:
+            # Check if user has a student profile
+            from .models import StudentProfile
+            try:
+                student_profile = StudentProfile.objects.get(user=user)
+            except StudentProfile.DoesNotExist:
+                return Response({
+                    'error': 'Student profile not found. Please complete your registration.',
+                    'matches': [],
+                    'count': 0
+                }, status=status.HTTP_404_NOT_FOUND)
+            
+            matches = get_student_matches(user.id, limit=limit)
+            return Response({
+                'matches': matches,
+                'count': len(matches)
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ProjectMatchesAPIView(APIView):
+    """Get matching students for a project"""
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, project_id):
+        limit = int(request.query_params.get('limit', 20))
+        
+        try:
+            matches = get_project_matches(project_id, limit=limit)
+            return Response({
+                'matches': matches,
+                'count': len(matches)
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class AllProjectsAPIView(APIView):
+    """Get all open projects for students to browse"""
+    
+    def get(self, request):
+        projects = ProfessorProject.objects.filter(is_open=True).select_related('profile')
+        serializer = ProfessorProjectSerializer(projects, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
