@@ -6,7 +6,11 @@ import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { isWeb } from '../utils/platform';
 
-const ProfileImagePicker = () => {
+interface ProfileImagePickerProps {
+  onImageSelected?: (file: any) => void;
+}
+
+const ProfileImagePicker: React.FC<ProfileImagePickerProps> = ({ onImageSelected }) => {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -25,6 +29,13 @@ const ProfileImagePicker = () => {
             const result = event.target?.result;
             if (typeof result === 'string') {
               setImageUri(result);
+              // Pass file to parent component
+              onImageSelected?.({
+                uri: result,
+                name: file.name,
+                type: file.type,
+                size: file.size,
+              });
             }
           };
           reader.readAsDataURL(file);
@@ -47,7 +58,15 @@ const ProfileImagePicker = () => {
       });
 
       if (!result.canceled) {
-        setImageUri(result.assets[0].uri);
+        const asset = result.assets[0];
+        setImageUri(asset.uri);
+        // Pass file to parent component
+        onImageSelected?.({
+          uri: asset.uri,
+          name: asset.fileName || 'image.jpg',
+          type: asset.type || 'image/jpeg',
+          size: asset.fileSize || 0,
+        });
       }
     }
   };

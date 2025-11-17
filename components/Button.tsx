@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
 import { isWeb } from '../utils/platform';
 import { getFontSize, getPadding } from '../utils/responsive';
+import { palette, radii, shadows } from '../constants/theme';
 
 interface ButtonProps {
   title: string;
@@ -52,7 +53,7 @@ export const Button: React.FC<ButtonProps> = ({
       activeOpacity={0.7}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? '#fff' : '#7da0ca'} />
+        <ActivityIndicator color={variant === 'primary' ? palette.textOnPrimary : palette.primary} />
       ) : (
         <Text style={buttonTextStyle}>{title}</Text>
       )}
@@ -64,21 +65,22 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: getPadding(14),
     paddingHorizontal: getPadding(24),
-    borderRadius: 8,
+    borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 48,
+    ...(isWeb ? shadows.sm : {}),
   },
   primary: {
-    backgroundColor: '#7da0ca',
+    backgroundColor: palette.primary,
   },
   secondary: {
-    backgroundColor: '#6c757d',
+    backgroundColor: palette.secondary,
   },
   outline: {
     backgroundColor: 'transparent',
     borderWidth: 2,
-    borderColor: '#7da0ca',
+    borderColor: palette.primary,
   },
   disabled: {
     opacity: 0.6,
@@ -92,27 +94,27 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
   },
   primaryText: {
-    color: '#fff',
+    color: palette.textOnPrimary,
   },
   secondaryText: {
-    color: '#fff',
+    color: palette.textOnPrimary,
   },
   outlineText: {
-    color: '#7da0ca',
+    color: palette.primary,
   },
 });
 
 // Helper to get button text color based on background
 const getButtonTextColor = (variant: string, style: any): string => {
   if (style?.backgroundColor === '#fff' || style?.backgroundColor === 'white') {
-    return '#7da0ca';
+    return palette.primary;
   }
   if (variant === 'primary') {
-    return '#fff';
+    return palette.textOnPrimary;
   }
   if (variant === 'secondary') {
-    return '#fff';
+    return palette.textOnPrimary;
   }
-  return '#7da0ca';
+  return palette.primary;
 };
 

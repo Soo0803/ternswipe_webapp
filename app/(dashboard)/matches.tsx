@@ -1,23 +1,37 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useMemo } from 'react';
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { WebsiteLayout } from '../../components/WebsiteLayout';
 import { isWeb } from '../../utils/platform';
 import { useStudentMatches } from '../../hooks/useStudentMatches';
 import { getFontSize, getPadding } from '../../utils/responsive';
-import { Ionicons } from '@expo/vector-icons';
+import { palette, radii } from '../../constants/theme';
 import { Button } from '../../components/Button';
 
 export default function StudentMatchesPage() {
   const router = useRouter();
   const { data: matches, loading, error } = useStudentMatches(50);
 
+  const averageScore = useMemo(() => {
+    if (!matches || matches.length === 0) return null;
+    const total = matches.reduce((sum, item) => sum + item.score * 100, 0);
+    return Math.round(total / matches.length);
+  }, [matches]);
+
   if (loading) {
     return (
       <WebsiteLayout showHeader={!isWeb}>
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color="#7da0ca" />
-          <Text style={styles.loadingText}>Loading your matches...</Text>
+          <ActivityIndicator size="large" color={palette.primary} />
+          <Text style={styles.centerMessage}>Finding projects that fit your profile…</Text>
         </View>
       </WebsiteLayout>
     );
@@ -27,309 +41,427 @@ export default function StudentMatchesPage() {
     return (
       <WebsiteLayout showHeader={!isWeb}>
         <View style={styles.centerContainer}>
-          <Ionicons name="alert-circle" size={48} color="#ff6b6b" />
-          <Text style={styles.errorText}>Error loading matches</Text>
-          <Text style={styles.errorDetail}>{error}</Text>
+          <Ionicons name='alert-circle' size={42} color={palette.danger} />
+          <Text style={styles.errorTitle}>We couldn’t load your matches</Text>
+          <Text style={styles.errorMessage}>{error}</Text>
           <Button
-            title="Try Again"
-            onPress={() => router.push('/(dashboard)')}
+            title='Back to dashboard'
+            onPress={() => router.replace('/(dashboard)')}
             style={styles.retryButton}
+            textStyle={styles.retryButtonText}
           />
         </View>
       </WebsiteLayout>
     );
   }
 
-  return (
-    <WebsiteLayout showHeader={!isWeb}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Your Matched Projects</Text>
-          <Text style={styles.subtitle}>
-            {matches.length} project{matches.length !== 1 ? 's' : ''} matched based on your profile
-          </Text>
-        </View>
+  const emptyState = (
+    <View style={styles.emptyState}>
+      <Ionicons name='search-outline' size={48} color={palette.textSubtle} />
+      <Text style={styles.emptyTitle}>No matches yet</Text>
+      <Text style={styles.emptyDescription}>
+        Update your profile with skills, availability, and interests to unlock tailored recommendations.
+      </Text>
+      <Button
+        title='Open profile'
+        onPress={() => router.push('/(dashboard)/profile')}
+        style={styles.panelButton}
+        textStyle={styles.panelButtonText}
+      />
+    </View>
+  );
 
-        {matches.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Ionicons name="search-outline" size={64} color="#ccc" />
-            <Text style={styles.emptyText}>No matches found</Text>
-            <Text style={styles.emptySubtext}>
-              Complete your profile to get better matches
+  if (!matches || matches.length === 0) {
+    return (
+      <WebsiteLayout showHeader={!isWeb}>
+        <View style={styles.container}>
+          <View style={styles.pageHeader}>
+            <Text style={styles.pageTitle}>Matched projects</Text>
+            <Text style={styles.pageSubtitle}>
+              We’ll keep scanning the research catalog and notify you when new fits arrive.
             </Text>
           </View>
-        ) : (
-          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-            {matches.map((match, index) => (
-              <TouchableOpacity
-                key={match.project_id}
-                style={styles.matchCard}
-                onPress={() => router.push(`/(project_and_research)/${match.project_id}`)}
-              >
-                <View style={styles.cardHeader}>
-                  <View style={styles.scoreBadge}>
-                    <Text style={styles.scoreText}>{Math.round(match.score * 100)}%</Text>
-                    <Text style={styles.scoreLabel}>Match</Text>
-                  </View>
-                  <View style={styles.cardHeaderRight}>
-                    <Text style={styles.matchRank}>#{index + 1}</Text>
-                  </View>
-                </View>
+          {emptyState}
+        </View>
+      </WebsiteLayout>
+    );
+  }
 
-                <Text style={styles.projectTitle}>{match.title}</Text>
-                <Text style={styles.professorName}>
-                  {match.professor_name} · {match.university}
-                </Text>
+  if (isWeb) {
+    return (
+      <WebsiteLayout showHeader={false}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.container}>
+            <View style={styles.pageHeader}>
+              <Text style={styles.pageTitle}>Your matched projects</Text>
+              <Text style={styles.pageSubtitle}>
+                {matches.length} opportunities curated for your profile{averageScore ? ` · Avg fit ${averageScore}%` : ''}
+              </Text>
+            </View>
 
-                <Text style={styles.description} numberOfLines={3}>
-                  {match.description || 'No description available'}
-                </Text>
+            <View style={styles.matchGrid}>
+              {matches.map((match, index) => (
+                <View key={match.project_id} style={styles.matchCard}>
+                  <View style={styles.matchHeader}>
+                    <View style={styles.matchBadge}>
+                      <Text style={styles.matchBadgeValue}>{Math.round(match.score * 100)}%</Text>
+                      <Text style={styles.matchBadgeLabel}>fit</Text>
+                    </View>
+                    <Text style={styles.matchIndex}>#{index + 1}</Text>
+                  </View>
 
-                <View style={styles.statsRow}>
-                  <View style={styles.statItem}>
-                    <Ionicons name="checkmark-circle" size={16} color="#4caf50" />
-                    <Text style={styles.statText}>
-                      {Math.round(match.skill_coverage * 100)}% Skills
-                    </Text>
-                  </View>
-                  <View style={styles.statItem}>
-                    <Ionicons name="calendar" size={16} color="#2196f3" />
-                    <Text style={styles.statText}>
-                      {Math.round(match.availability * 100)}% Available
-                    </Text>
-                  </View>
-                  <View style={styles.statItem}>
-                    <Ionicons name="time" size={16} color="#ff9800" />
-                    <Text style={styles.statText}>{match.hrs_per_week} hrs/week</Text>
-                  </View>
-                </View>
-
-                {match.required_skills && match.required_skills.length > 0 && (
-                  <View style={styles.skillsContainer}>
-                    {match.required_skills.slice(0, 5).map((skill, idx) => (
-                      <View key={idx} style={styles.skillTag}>
-                        <Text style={styles.skillText}>{skill}</Text>
-                      </View>
-                    ))}
-                    {match.required_skills.length > 5 && (
-                      <Text style={styles.moreSkills}>
-                        +{match.required_skills.length - 5} more
-                      </Text>
-                    )}
-                  </View>
-                )}
-
-                <View style={styles.cardFooter}>
-                  <Text style={styles.capacityText}>
-                    {match.capacity} position{match.capacity !== 1 ? 's' : ''} available
+                  <Text style={styles.matchTitle} numberOfLines={2}>{match.title}</Text>
+                  <Text style={styles.matchProfessor} numberOfLines={1}>
+                    {match.professor_name} · {match.university}
                   </Text>
-                  <TouchableOpacity
-                    style={styles.viewButton}
-                    onPress={() => router.push(`/(project_and_research)/${match.project_id}`)}
-                  >
-                    <Text style={styles.viewButtonText}>View Details</Text>
-                    <Ionicons name="arrow-forward" size={16} color="#7da0ca" />
-                  </TouchableOpacity>
+
+                  <Text style={styles.matchDescription} numberOfLines={3}>
+                    {match.description || 'Professor will update the description soon. Tap view for full context.'}
+                  </Text>
+
+                  <View style={styles.metaRow}>
+                    <MetaChip icon='checkmark-circle' label={`${Math.round(match.skill_coverage * 100)}% skill alignment`} />
+                    <MetaChip icon='calendar-outline' label={`${Math.round(match.availability * 100)}% availability`} />
+                    {match.hrs_per_week ? (
+                      <MetaChip icon='time-outline' label={`${match.hrs_per_week} hrs / week`} />
+                    ) : null}
+                  </View>
+
+                  {match.required_skills && match.required_skills.length > 0 && (
+                    <View style={styles.skillRow}>
+                      {match.required_skills.slice(0, 6).map((skill) => (
+                        <View key={skill} style={styles.skillTag}>
+                          <Text style={styles.skillText}>{skill}</Text>
+                        </View>
+                      ))}
+                      {match.required_skills.length > 6 ? (
+                        <Text style={styles.skillOverflow}>
+                          +{match.required_skills.length - 6}
+                        </Text>
+                      ) : null}
+                    </View>
+                  )}
+
+                  <View style={styles.cardFooter}>
+                    <View style={styles.footerLeft}>
+                      <Ionicons name='people-outline' size={14} color={palette.textSubtle} />
+                      <Text style={styles.footerText}>
+                        {match.capacity} position{match.capacity === 1 ? '' : 's'} open
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.viewButton}
+                      onPress={() => router.push(`/(project_and_research)/${match.project_id}`)}
+                    >
+                      <Text style={styles.viewButtonText}>View project</Text>
+                      <Ionicons name='arrow-forward' size={14} color={palette.primary} />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        )}
-      </View>
+              ))}
+            </View>
+          </View>
+        </ScrollView>
+      </WebsiteLayout>
+    );
+  }
+
+  return (
+    <WebsiteLayout showHeader={false}>
+      <ScrollView
+        style={styles.mobileScroll}
+        contentContainerStyle={styles.mobileContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.mobileTitle}>Matched projects</Text>
+        <Text style={styles.mobileSubtitle}>
+          {matches.length} opportunities customized to your profile
+        </Text>
+
+        {matches.map((match) => (
+          <TouchableOpacity
+            key={match.project_id}
+            style={styles.mobileCard}
+            onPress={() => router.push(`/(project_and_research)/${match.project_id}`)}
+          >
+            <View style={styles.mobileCardHeader}>
+              <Text style={styles.mobileCardTitle}>{match.title}</Text>
+              <Text style={styles.mobileCardScore}>{Math.round(match.score * 100)}%</Text>
+            </View>
+            <Text style={styles.mobileCardProfessor} numberOfLines={1}>
+              {match.professor_name}
+            </Text>
+            <Text style={styles.mobileCardDescription} numberOfLines={2}>
+              {match.description || 'Preview the full description for details.'}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
     </WebsiteLayout>
   );
 }
 
+function MetaChip({ icon, label }: { icon: any; label: string }) {
+  return (
+    <View style={styles.metaChip}>
+      <Ionicons name={icon} size={14} color={palette.textSubtle} />
+      <Text style={styles.metaChipText}>{label}</Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
+  scrollContent: {
+    paddingBottom: getPadding(80),
+  },
   container: {
-    flex: 1,
     width: '100%',
-    maxWidth: 1000,
-    marginHorizontal: 'auto',
-    paddingHorizontal: getPadding(24),
-    paddingVertical: getPadding(32),
+    gap: getPadding(24),
   },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: getPadding(32),
+  pageHeader: {
+    gap: getPadding(10),
   },
-  loadingText: {
-    marginTop: getPadding(16),
-    fontSize: getFontSize(16),
-    color: '#666',
-  },
-  errorText: {
-    marginTop: getPadding(16),
-    fontSize: getFontSize(20),
-    fontWeight: '600',
-    color: '#333',
-  },
-  errorDetail: {
-    marginTop: getPadding(8),
-    fontSize: getFontSize(14),
-    color: '#666',
-    textAlign: 'center',
-  },
-  retryButton: {
-    marginTop: getPadding(24),
-  },
-  header: {
-    marginBottom: getPadding(32),
-  },
-  title: {
+  pageTitle: {
     fontSize: getFontSize(32),
     fontWeight: '700',
-    color: '#1a1a1a',
-    marginBottom: getPadding(8),
+    color: palette.text,
   },
-  subtitle: {
+  pageSubtitle: {
     fontSize: getFontSize(16),
-    color: '#666',
+    color: palette.textMuted,
   },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: getPadding(80),
-  },
-  emptyText: {
-    marginTop: getPadding(16),
-    fontSize: getFontSize(20),
-    fontWeight: '600',
-    color: '#333',
-  },
-  emptySubtext: {
-    marginTop: getPadding(8),
-    fontSize: getFontSize(14),
-    color: '#666',
-    textAlign: 'center',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: getPadding(32),
-  },
-  matchCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: getPadding(20),
-    marginBottom: getPadding(16),
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: getPadding(16),
-  },
-  scoreBadge: {
-    backgroundColor: '#7da0ca',
-    borderRadius: 8,
-    paddingHorizontal: getPadding(12),
-    paddingVertical: getPadding(8),
-    alignItems: 'center',
-  },
-  scoreText: {
-    fontSize: getFontSize(20),
-    fontWeight: '700',
-    color: '#fff',
-  },
-  scoreLabel: {
-    fontSize: getFontSize(10),
-    color: '#fff',
-    marginTop: 2,
-  },
-  cardHeaderRight: {
-    alignItems: 'flex-end',
-  },
-  matchRank: {
-    fontSize: getFontSize(14),
-    color: '#999',
-    fontWeight: '600',
-  },
-  projectTitle: {
-    fontSize: getFontSize(20),
-    fontWeight: '600',
-    color: '#1a1a1a',
-    marginBottom: getPadding(8),
-  },
-  professorName: {
-    fontSize: getFontSize(14),
-    color: '#666',
-    marginBottom: getPadding(12),
-  },
-  description: {
-    fontSize: getFontSize(14),
-    color: '#666',
-    lineHeight: getFontSize(20),
-    marginBottom: getPadding(16),
-  },
-  statsRow: {
+  matchGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: getPadding(12),
-    marginBottom: getPadding(16),
+    gap: getPadding(18),
   },
-  statItem: {
+  matchCard: {
+    flexBasis: '48%',
+    backgroundColor: palette.surfaceMuted,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: palette.border,
+    padding: getPadding(22),
+    gap: getPadding(14),
+  },
+  matchHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  matchBadge: {
+    alignItems: 'center',
+    paddingHorizontal: getPadding(10),
+    paddingVertical: getPadding(6),
+    borderRadius: radii.pill,
+    backgroundColor: palette.primarySoft,
+  },
+  matchBadgeValue: {
+    fontSize: getFontSize(16),
+    fontWeight: '700',
+    color: palette.primary,
+  },
+  matchBadgeLabel: {
+    fontSize: getFontSize(10),
+    color: palette.textSubtle,
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+  },
+  matchIndex: {
+    fontSize: getFontSize(13),
+    color: palette.textSubtle,
+  },
+  matchTitle: {
+    fontSize: getFontSize(20),
+    fontWeight: '600',
+    color: palette.text,
+    lineHeight: getFontSize(26),
+  },
+  matchProfessor: {
+    fontSize: getFontSize(14),
+    color: palette.textSubtle,
+  },
+  matchDescription: {
+    fontSize: getFontSize(14),
+    color: palette.textMuted,
+    lineHeight: getFontSize(22),
+  },
+  metaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: getPadding(10),
+  },
+  metaChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 6,
+    paddingHorizontal: getPadding(10),
+    paddingVertical: getPadding(6),
+    borderRadius: radii.pill,
+    backgroundColor: palette.surface,
+    borderWidth: 1,
+    borderColor: palette.border,
   },
-  statText: {
+  metaChipText: {
     fontSize: getFontSize(12),
-    color: '#666',
+    color: palette.textSubtle,
   },
-  skillsContainer: {
+  skillRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: getPadding(8),
-    marginBottom: getPadding(16),
   },
   skillTag: {
-    backgroundColor: '#f0f0f0',
-    borderRadius: 6,
-    paddingHorizontal: getPadding(8),
+    paddingHorizontal: getPadding(10),
     paddingVertical: getPadding(4),
+    borderRadius: radii.md,
+    backgroundColor: palette.surface,
+    borderWidth: 1,
+    borderColor: palette.border,
   },
   skillText: {
     fontSize: getFontSize(12),
-    color: '#333',
+    color: palette.text,
   },
-  moreSkills: {
+  skillOverflow: {
     fontSize: getFontSize(12),
-    color: '#999',
+    color: palette.textSubtle,
     alignSelf: 'center',
   },
   cardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: getPadding(16),
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    marginTop: getPadding(6),
   },
-  capacityText: {
-    fontSize: getFontSize(14),
-    color: '#666',
+  footerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  footerText: {
+    fontSize: getFontSize(12),
+    color: palette.textSubtle,
   },
   viewButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 6,
   },
   viewButtonText: {
-    fontSize: getFontSize(14),
-    color: '#7da0ca',
+    fontSize: getFontSize(13),
     fontWeight: '600',
+    color: palette.primary,
+  },
+  centerContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: getPadding(16),
+    padding: getPadding(32),
+  },
+  centerMessage: {
+    fontSize: getFontSize(14),
+    color: palette.textMuted,
+  },
+  errorTitle: {
+    fontSize: getFontSize(18),
+    fontWeight: '600',
+    color: palette.text,
+  },
+  errorMessage: {
+    fontSize: getFontSize(14),
+    color: palette.textMuted,
+    textAlign: 'center',
+  },
+  retryButton: {
+    paddingHorizontal: getPadding(22),
+  },
+  retryButtonText: {
+    color: palette.textOnPrimary,
+  },
+  emptyState: {
+    alignItems: 'center',
+    gap: getPadding(14),
+    paddingVertical: getPadding(60),
+    paddingHorizontal: getPadding(24),
+    backgroundColor: palette.surfaceMuted,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: palette.border,
+  },
+  emptyTitle: {
+    fontSize: getFontSize(18),
+    fontWeight: '600',
+    color: palette.text,
+  },
+  emptyDescription: {
+    fontSize: getFontSize(14),
+    color: palette.textMuted,
+    textAlign: 'center',
+    lineHeight: getFontSize(22),
+  },
+  panelButton: {
+    paddingHorizontal: getPadding(24),
+    backgroundColor: palette.primary,
+    borderColor: palette.primary,
+  },
+  panelButtonText: {
+    color: palette.textOnPrimary,
+  },
+  mobileScroll: {
+    flex: 1,
+    backgroundColor: palette.background,
+  },
+  mobileContent: {
+    padding: getPadding(20),
+    gap: getPadding(14),
+  },
+  mobileTitle: {
+    fontSize: getFontSize(24),
+    fontWeight: '700',
+    color: palette.text,
+  },
+  mobileSubtitle: {
+    fontSize: getFontSize(14),
+    color: palette.textMuted,
+  },
+  mobileCard: {
+    backgroundColor: palette.surfaceMuted,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: palette.border,
+    padding: getPadding(18),
+    gap: getPadding(8),
+  },
+  mobileCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  mobileCardTitle: {
+    flex: 1,
+    fontSize: getFontSize(16),
+    fontWeight: '600',
+    color: palette.text,
+    marginRight: getPadding(12),
+  },
+  mobileCardScore: {
+    fontSize: getFontSize(14),
+    fontWeight: '600',
+    color: palette.primary,
+  },
+  mobileCardProfessor: {
+    fontSize: getFontSize(13),
+    color: palette.textSubtle,
+  },
+  mobileCardDescription: {
+    fontSize: getFontSize(13),
+    color: palette.textMuted,
+    lineHeight: getFontSize(20),
   },
 });
 

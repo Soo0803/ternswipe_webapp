@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { WebsiteLayout } from '../../components/WebsiteLayout';
@@ -6,6 +6,7 @@ import { isWeb } from '../../utils/platform';
 import { useProjectMatches } from '../../hooks/useProjectMatches';
 import { getFontSize, getPadding } from '../../utils/responsive';
 import { Ionicons } from '@expo/vector-icons';
+import { palette, radii } from '../../constants/theme';
 
 export default function ProjectMatchesPage() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function ProjectMatchesPage() {
     return (
       <WebsiteLayout showHeader={!isWeb}>
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color="#7da0ca" />
+          <ActivityIndicator size="large" color={palette.primary} />
           <Text style={styles.loadingText}>Loading student matches...</Text>
         </View>
       </WebsiteLayout>
@@ -30,7 +31,7 @@ export default function ProjectMatchesPage() {
     return (
       <WebsiteLayout showHeader={!isWeb}>
         <View style={styles.centerContainer}>
-          <Ionicons name="alert-circle" size={48} color="#ff6b6b" />
+          <Ionicons name="alert-circle" size={48} color={palette.danger} />
           <Text style={styles.errorText}>Error loading matches</Text>
           <Text style={styles.errorDetail}>{error}</Text>
         </View>
@@ -43,7 +44,7 @@ export default function ProjectMatchesPage() {
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#7da0ca" />
+            <Ionicons name="arrow-back" size={24} color={palette.primary} />
             <Text style={styles.backText}>Back</Text>
           </TouchableOpacity>
           <Text style={styles.title}>Matched Students</Text>
@@ -54,7 +55,7 @@ export default function ProjectMatchesPage() {
 
         {matches.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Ionicons name="people-outline" size={64} color="#ccc" />
+            <Ionicons name="people-outline" size={64} color={palette.textSubtle} />
             <Text style={styles.emptyText}>No matches found</Text>
             <Text style={styles.emptySubtext}>
               No students match the requirements for this project
@@ -91,19 +92,19 @@ export default function ProjectMatchesPage() {
 
                 <View style={styles.statsRow}>
                   <View style={styles.statItem}>
-                    <Ionicons name="checkmark-circle" size={16} color="#4caf50" />
+                    <Ionicons name="checkmark-circle" size={16} color={palette.success} />
                     <Text style={styles.statText}>
                       {Math.round(match.skill_coverage * 100)}% Skills
                     </Text>
                   </View>
                   <View style={styles.statItem}>
-                    <Ionicons name="calendar" size={16} color="#2196f3" />
+                    <Ionicons name="calendar" size={16} color={palette.info} />
                     <Text style={styles.statText}>
                       {Math.round(match.availability * 100)}% Available
                     </Text>
                   </View>
                   <View style={styles.statItem}>
-                    <Ionicons name="school" size={16} color="#9c27b0" />
+                    <Ionicons name="school" size={16} color={palette.primary} />
                     <Text style={styles.statText}>
                       {match.gpa ? `GPA: ${match.gpa.toFixed(2)}` : 'No GPA'}
                     </Text>
@@ -134,7 +135,7 @@ export default function ProjectMatchesPage() {
 
                 <View style={styles.cardFooter}>
                   <View style={styles.contactButton}>
-                    <Ionicons name="mail" size={16} color="#7da0ca" />
+                    <Ionicons name="mail" size={16} color={palette.primary} />
                     <Text style={styles.contactText}>Contact Student</Text>
                   </View>
                 </View>
@@ -155,28 +156,30 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     paddingHorizontal: getPadding(24),
     paddingVertical: getPadding(32),
+    gap: getPadding(24),
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: getPadding(32),
+    gap: getPadding(16),
   },
   loadingText: {
     marginTop: getPadding(16),
     fontSize: getFontSize(16),
-    color: '#666',
+    color: palette.textMuted,
   },
   errorText: {
     marginTop: getPadding(16),
     fontSize: getFontSize(20),
     fontWeight: '600',
-    color: '#333',
+    color: palette.text,
   },
   errorDetail: {
     marginTop: getPadding(8),
     fontSize: getFontSize(14),
-    color: '#666',
+    color: palette.textMuted,
     textAlign: 'center',
   },
   header: {
@@ -189,35 +192,36 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: getFontSize(16),
-    color: '#7da0ca',
+    color: palette.primary,
     marginLeft: 4,
   },
   title: {
     fontSize: getFontSize(32),
     fontWeight: '700',
-    color: '#1a1a1a',
+    color: palette.text,
     marginBottom: getPadding(8),
   },
   subtitle: {
     fontSize: getFontSize(16),
-    color: '#666',
+    color: palette.textMuted,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: getPadding(80),
+    gap: getPadding(14),
   },
   emptyText: {
     marginTop: getPadding(16),
     fontSize: getFontSize(20),
     fontWeight: '600',
-    color: '#333',
+    color: palette.text,
   },
   emptySubtext: {
     marginTop: getPadding(8),
     fontSize: getFontSize(14),
-    color: '#666',
+    color: palette.textMuted,
     textAlign: 'center',
   },
   scrollView: {
@@ -227,17 +231,13 @@ const styles = StyleSheet.create({
     paddingBottom: getPadding(32),
   },
   matchCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
+    backgroundColor: palette.surfaceMuted,
+    borderRadius: radii.lg,
     padding: getPadding(20),
     marginBottom: getPadding(16),
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: palette.border,
+    gap: getPadding(12),
   },
   cardHeader: {
     flexDirection: 'row',
@@ -246,8 +246,8 @@ const styles = StyleSheet.create({
     marginBottom: getPadding(16),
   },
   scoreBadge: {
-    backgroundColor: '#7da0ca',
-    borderRadius: 8,
+    backgroundColor: palette.primarySoft,
+    borderRadius: radii.md,
     paddingHorizontal: getPadding(12),
     paddingVertical: getPadding(8),
     alignItems: 'center',
@@ -255,11 +255,11 @@ const styles = StyleSheet.create({
   scoreText: {
     fontSize: getFontSize(20),
     fontWeight: '700',
-    color: '#fff',
+    color: palette.primary,
   },
   scoreLabel: {
     fontSize: getFontSize(10),
-    color: '#fff',
+    color: palette.textSubtle,
     marginTop: 2,
   },
   cardHeaderRight: {
@@ -267,29 +267,29 @@ const styles = StyleSheet.create({
   },
   matchRank: {
     fontSize: getFontSize(14),
-    color: '#999',
+    color: palette.textSubtle,
     fontWeight: '600',
   },
   studentName: {
     fontSize: getFontSize(20),
     fontWeight: '600',
-    color: '#1a1a1a',
+    color: palette.text,
     marginBottom: getPadding(4),
   },
   studentEmail: {
     fontSize: getFontSize(14),
-    color: '#666',
+    color: palette.textSubtle,
     marginBottom: getPadding(12),
   },
   headline: {
     fontSize: getFontSize(16),
     fontWeight: '600',
-    color: '#333',
+    color: palette.text,
     marginBottom: getPadding(8),
   },
   summary: {
     fontSize: getFontSize(14),
-    color: '#666',
+    color: palette.textMuted,
     lineHeight: getFontSize(20),
     marginBottom: getPadding(16),
   },
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: getFontSize(12),
-    color: '#666',
+    color: palette.textSubtle,
   },
   majorContainer: {
     flexDirection: 'row',
@@ -316,12 +316,12 @@ const styles = StyleSheet.create({
   majorLabel: {
     fontSize: getFontSize(14),
     fontWeight: '600',
-    color: '#333',
+    color: palette.text,
     marginRight: 8,
   },
   majorText: {
     fontSize: getFontSize(14),
-    color: '#666',
+    color: palette.textMuted,
   },
   skillsContainer: {
     flexDirection: 'row',
@@ -330,37 +330,41 @@ const styles = StyleSheet.create({
     marginBottom: getPadding(16),
   },
   skillTag: {
-    backgroundColor: '#f0f0f0',
-    borderRadius: 6,
+    backgroundColor: palette.surface,
+    borderRadius: radii.md,
     paddingHorizontal: getPadding(8),
     paddingVertical: getPadding(4),
+    borderWidth: 1,
+    borderColor: palette.border,
   },
   skillText: {
     fontSize: getFontSize(12),
-    color: '#333',
+    color: palette.text,
   },
   moreSkills: {
     fontSize: getFontSize(12),
-    color: '#999',
+    color: palette.textSubtle,
     alignSelf: 'center',
   },
   cardFooter: {
     paddingTop: getPadding(16),
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: palette.border,
   },
   contactButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f0f7ff',
-    borderRadius: 8,
+    backgroundColor: palette.primarySoft,
+    borderRadius: radii.md,
     padding: getPadding(12),
     gap: 8,
+    borderWidth: 1,
+    borderColor: palette.primary,
   },
   contactText: {
     fontSize: getFontSize(14),
-    color: '#7da0ca',
+    color: palette.primary,
     fontWeight: '600',
   },
 });

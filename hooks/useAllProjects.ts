@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getApiUrl } from '../utils/apiConfig';
+import { getAllProjects } from '../services/supabaseData';
 
 interface Project {
   id: number;
@@ -26,18 +26,8 @@ export function useAllProjects() {
     async function fetchProjects() {
       try {
         setLoading(true);
-        const response = await fetch(getApiUrl('api/user/projects/'), {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch projects: ${response.statusText}`);
-        }
-
-        const result: Project[] = await response.json();
-        setData(result || []);
+        const result = await getAllProjects();
+        setData(result as Project[]);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch projects');

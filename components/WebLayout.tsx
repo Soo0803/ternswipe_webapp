@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { isWeb } from '../utils/platform';
 import { getMaxWidth, getPadding } from '../utils/responsive';
+import { palette } from '../constants/theme';
 
 interface WebLayoutProps {
   children: React.ReactNode;
@@ -14,7 +15,7 @@ export const WebLayout: React.FC<WebLayoutProps> = ({
   children,
   maxWidth,
   padding,
-  backgroundColor = '#fff',
+  backgroundColor = palette.surface,
 }) => {
   const containerMaxWidth = maxWidth || getMaxWidth();
   const containerPadding = padding !== undefined ? padding : getPadding(24);

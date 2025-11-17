@@ -3,24 +3,40 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+import { palette } from './theme';
+
+const tintColorLight = palette.primary;
+const tintColorDark = palette.primary;
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
+    text: palette.text,
+    textMuted: palette.textMuted,
+    background: palette.background,
+    surface: palette.surface,
+    surfaceMuted: palette.surfaceMuted,
+    border: palette.border,
     tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
+    icon: palette.textSubtle,
+    tabIconDefault: palette.textSubtle,
     tabIconSelected: tintColorLight,
+    success: palette.success,
+    warning: palette.warning,
+    danger: palette.danger,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
+    text: palette.text,
+    textMuted: palette.textMuted,
+    background: palette.background,
+    surface: palette.surface,
+    surfaceMuted: palette.surfaceMuted,
+    border: palette.border,
     tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
+    icon: palette.textSubtle,
+    tabIconDefault: palette.textSubtle,
     tabIconSelected: tintColorDark,
+    success: palette.success,
+    warning: palette.warning,
+    danger: palette.danger,
   },
 };

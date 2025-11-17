@@ -4,7 +4,8 @@ from .models import User, StudentProfile, ProfessorProfile, ProfessorProject
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password', 'email', 'role')  # Include only the fields you need to return
+        fields = ('id', 'username', 'password', 'email', 'role')  # Include only the fields you need to return
+        read_only_fields = ('id',)
 
 
 class StudentProfileSerializer(serializers.ModelSerializer):

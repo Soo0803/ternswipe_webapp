@@ -1,52 +1,91 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, usePathname } from 'expo-router';
 import { isWeb } from '../utils/platform';
 import { getFontSize, getPadding } from '../utils/responsive';
 import AppLogo from '../assets/app_icon/in_app_logo.svg';
+import { palette, radii } from '../constants/theme';
+
+type NavItem = {
+  label: string;
+  href: string;
+  isExternal?: boolean;
+};
+
+const navItems: NavItem[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Projects', href: '/(project_and_research)' },
+];
 
 export const WebsiteHeader: React.FC = () => {
   const router = useRouter();
+  const pathname = usePathname();
 
   if (!isWeb) {
     return null; // Don't show on mobile
   }
 
   return (
-    <View style={styles.header}>
-      <View style={styles.headerContent}>
-        <Pressable onPress={() => router.push('/')} style={styles.logoContainer}>
-          <AppLogo width={120} height={40} />
-        </Pressable>
-        
-        <View style={styles.nav}>
-          <TouchableOpacity 
-            onPress={() => router.push('/')}
-            style={styles.navItem}
-          >
-            <Text style={styles.navText}>Home</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            onPress={() => router.push('/log_in_page')}
-            style={styles.navItem}
-          >
-            <Text style={styles.navText}>Login</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            onPress={() => router.push('/(student_sign_up)')}
-            style={styles.navButton}
-          >
-            <Text style={styles.navButtonText}>Register as Student</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            onPress={() => router.push('/(company_sign_up)')}
-            style={[styles.navButton, styles.navButtonPrimary]}
-          >
-            <Text style={[styles.navButtonText, styles.navButtonTextPrimary]}>Register as Professor</Text>
-          </TouchableOpacity>
+    <View style={styles.root}>
+      <View style={styles.header}>
+        <View style={styles.logoBlock}>
+          <Pressable onPress={() => router.push('/')} style={styles.logoContainer}>
+            <AppLogo width={132} height={44} />
+          </Pressable>
+          <Text style={styles.logoWordmark}>TernSwipe</Text>
+        </View>
+
+        <View style={styles.rightCluster}>
+          <View style={styles.nav}>
+            {navItems.map((item) => {
+              const isActive =
+                item.href === '/'
+                  ? pathname === '/' || pathname === ''
+                  : pathname?.startsWith(item.href);
+              return (
+                <TouchableOpacity
+                  key={item.href}
+                  onPress={() => {
+                    if (item.isExternal) {
+                      if (typeof window !== 'undefined') {
+                        window.open(item.href, '_blank');
+                      }
+                    } else {
+                      router.push(item.href as any);
+                    }
+                  }}
+                  style={[styles.navItem, isActive && styles.navItemActive]}
+                >
+                  <Text
+                    style={[
+                      styles.navText,
+                      isActive && styles.navTextActive,
+                    ]}
+                  >
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <View style={styles.actions}>
+                  <TouchableOpacity
+                    onPress={() => router.push('/(auth)/login')}
+                    style={styles.loginLink}
+                  >
+                    <Text style={styles.loginText}>Sign in</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => router.push('/(auth)/signup')}
+                    style={[styles.actionButton, styles.professorButton]}
+                  >
+                    <Text style={[styles.actionButtonText, styles.professorButtonText]}>
+                      Sign up
+                    </Text>
+                  </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
@@ -54,66 +93,110 @@ export const WebsiteHeader: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  header: {
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    paddingVertical: getPadding(16),
+  root: {
     position: 'sticky' as any,
     top: 0,
     zIndex: 1000,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  headerContent: {
-    maxWidth: 1200,
     width: '100%',
+    backgroundColor: palette.background,
+    borderBottomWidth: 1,
+    borderBottomColor: palette.border,
+  },
+  header: {
+    width: '100%',
+    maxWidth: 1440,
     marginHorizontal: 'auto',
+    paddingVertical: getPadding(10),
+    paddingHorizontal: getPadding(32),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: getPadding(24),
+    gap: getPadding(24),
+  },
+  logoBlock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: getPadding(12),
+    flexShrink: 0,
   },
   logoContainer: {
     cursor: 'pointer',
   },
+  logoWordmark: {
+    fontSize: getFontSize(18),
+    fontWeight: '700',
+    color: palette.text,
+    letterSpacing: 0.5,
+  },
+  rightCluster: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: getPadding(16),
+    flexShrink: 0,
+  },
   nav: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: getPadding(24),
+    justifyContent: 'flex-end',
+    columnGap: getPadding(12),
   },
   navItem: {
     paddingVertical: getPadding(8),
-    paddingHorizontal: getPadding(12),
+    paddingHorizontal: getPadding(14),
+    borderRadius: radii.pill,
   },
   navText: {
     fontSize: getFontSize(14),
-    color: '#666',
+    color: palette.textSubtle,
     fontFamily: 'Inter-Regular',
     fontWeight: '500',
+    letterSpacing: 0.2,
   },
-  navButton: {
-    paddingVertical: getPadding(8),
-    paddingHorizontal: getPadding(16),
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#7da0ca',
+  navItemActive: {
+    backgroundColor: palette.primarySoft,
   },
-  navButtonPrimary: {
-    backgroundColor: '#7da0ca',
-    borderColor: '#7da0ca',
-  },
-  navButtonText: {
-    fontSize: getFontSize(14),
-    color: '#7da0ca',
-    fontFamily: 'Inter-Regular',
+  navTextActive: {
+    color: palette.primary,
     fontWeight: '600',
   },
-  navButtonTextPrimary: {
-    color: '#fff',
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: getPadding(10),
+  },
+  loginLink: {
+    paddingHorizontal: getPadding(8),
+    paddingVertical: getPadding(6),
+  },
+  loginText: {
+    fontSize: getFontSize(14),
+    color: palette.textSubtle,
+    fontWeight: '500',
+  },
+  actionButton: {
+    paddingVertical: getPadding(10),
+    paddingHorizontal: getPadding(18),
+    borderRadius: radii.pill,
+    borderWidth: 1,
+    borderColor: palette.border,
+    backgroundColor: palette.surface,
+  },
+  actionButtonText: {
+    fontSize: getFontSize(14),
+    fontWeight: '600',
+    color: palette.text,
+  },
+  studentButton: {
+    backgroundColor: palette.surfaceMuted,
+    borderColor: palette.border,
+  },
+  professorButton: {
+    backgroundColor: palette.primary,
+    borderColor: palette.primary,
+  },
+  professorButtonText: {
+    color: palette.textOnPrimary,
   },
 });
 

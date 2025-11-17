@@ -21,6 +21,7 @@ import { isWeb } from '../../utils/platform';
 import { getFontSize, getPadding } from '../../utils/responsive';
 import { useProjectMatches } from '../../hooks/useProjectMatches';
 import { Button } from '../../components/Button';
+import { palette, radii } from '../../constants/theme';
 
 const ProjectDetail = () => {
   const { id } = useLocalSearchParams();
@@ -84,7 +85,7 @@ const ProjectDetail = () => {
     return (
       <WebsiteLayout showHeader={!isWeb}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#7da0ca" />
+          <ActivityIndicator size="large" color={palette.primary} />
           <Text style={styles.loadingText}>Loading project details...</Text>
         </View>
       </WebsiteLayout>
@@ -95,7 +96,7 @@ const ProjectDetail = () => {
     return (
       <WebsiteLayout showHeader={!isWeb}>
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle" size={48} color="#ff6b6b" />
+          <Ionicons name="alert-circle" size={48} color={palette.danger} />
           <Text style={styles.errorText}>{error || 'Project not found'}</Text>
           <Button
             title="Go Back"
@@ -112,7 +113,7 @@ const ProjectDetail = () => {
       {/* Header */}
       <View style={[styles.header, isWeb && styles.webHeader]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons name="arrow-back" size={24} color={palette.text} />
           {isWeb && <Text style={styles.backText}>Back</Text>}
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Research Details</Text>
@@ -130,7 +131,7 @@ const ProjectDetail = () => {
                 resizeMode="cover"
               />
             ) : (
-              <Ionicons name="person-circle" size={100} color="#ccc" />
+              <Ionicons name="person-circle" size={100} color={palette.textSubtle} />
             )}
           </View>
           <Text style={styles.professorName}>
@@ -160,7 +161,7 @@ const ProjectDetail = () => {
           <View style={styles.detailsGrid}>
             {project.required_skills && project.required_skills.length > 0 && (
               <View style={styles.detailItem}>
-                <Ionicons name="code-slash" size={20} color="#7da0ca" />
+                <Ionicons name="code-slash" size={20} color={palette.primary} />
                 <View style={styles.detailContent}>
                   <Text style={styles.detailLabel}>Required Skills</Text>
                   <View style={styles.skillsContainer}>
@@ -175,7 +176,7 @@ const ProjectDetail = () => {
             )}
             {project.hrs_per_week && (
               <View style={styles.detailItem}>
-                <Ionicons name="time" size={20} color="#7da0ca" />
+                <Ionicons name="time" size={20} color={palette.primary} />
                 <View style={styles.detailContent}>
                   <Text style={styles.detailLabel}>Hours per Week</Text>
                   <Text style={styles.detailValue}>{project.hrs_per_week} hrs/week</Text>
@@ -184,7 +185,7 @@ const ProjectDetail = () => {
             )}
             {project.start_date && (
               <View style={styles.detailItem}>
-                <Ionicons name="calendar" size={20} color="#7da0ca" />
+                <Ionicons name="calendar" size={20} color={palette.primary} />
                 <View style={styles.detailContent}>
                   <Text style={styles.detailLabel}>Start Date</Text>
                   <Text style={styles.detailValue}>
@@ -195,7 +196,7 @@ const ProjectDetail = () => {
             )}
             {project.end_date && (
               <View style={styles.detailItem}>
-                <Ionicons name="calendar-outline" size={20} color="#7da0ca" />
+                <Ionicons name="calendar-outline" size={20} color={palette.primary} />
                 <View style={styles.detailContent}>
                   <Text style={styles.detailLabel}>End Date</Text>
                   <Text style={styles.detailValue}>
@@ -309,7 +310,7 @@ const ProjectDetail = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: palette.background,
   },
   webContainer: {
     width: '100%',
@@ -317,28 +318,31 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     paddingHorizontal: getPadding(24),
     paddingVertical: getPadding(32),
+    gap: getPadding(24),
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: getPadding(32),
+    gap: getPadding(16),
   },
   loadingText: {
     marginTop: getPadding(16),
     fontSize: getFontSize(16),
-    color: '#666',
+    color: palette.textMuted,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: getPadding(32),
+    gap: getPadding(16),
   },
   errorText: {
     marginTop: getPadding(16),
     fontSize: getFontSize(18),
-    color: '#333',
+    color: palette.text,
     textAlign: 'center',
   },
   header: {
@@ -348,7 +352,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: isWeb ? getPadding(0) : 20,
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
+    borderBottomColor: palette.border,
     marginBottom: getPadding(20),
   },
   webHeader: {
@@ -358,16 +362,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 8,
+    borderRadius: radii.md,
   },
   backText: {
     fontSize: getFontSize(14),
-    color: '#7da0ca',
+    color: palette.primary,
     marginLeft: 4,
   },
   headerTitle: {
     fontSize: isWeb ? getFontSize(24) : 18,
     fontWeight: "600",
-    color: "#333",
+    color: palette.text,
   },
   placeholder: {
     width: 40,
@@ -379,9 +384,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 30,
     paddingHorizontal: 20,
-    backgroundColor: "#f8f9fa",
-    borderRadius: 12,
+    backgroundColor: palette.surfaceMuted,
+    borderRadius: radii.xl,
     marginBottom: getPadding(24),
+    borderWidth: 1,
+    borderColor: palette.border,
+    gap: getPadding(12),
   },
   profileImageContainer: {
     width: 100,
@@ -390,8 +398,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginBottom: 15,
     borderWidth: 3,
-    borderColor: "#7da0ca",
-    backgroundColor: '#fff',
+    borderColor: palette.primary,
+    backgroundColor: palette.surface,
   },
   profileImage: {
     width: "100%",
@@ -400,18 +408,19 @@ const styles = StyleSheet.create({
   professorName: {
     fontSize: isWeb ? getFontSize(24) : 24,
     fontWeight: "bold",
-    color: "#333",
+    color: palette.text,
     marginBottom: 5,
   },
   university: {
     fontSize: getFontSize(16),
-    color: "#666",
+    color: palette.textSubtle,
     marginBottom: 5,
   },
   section: {
     paddingHorizontal: isWeb ? 0 : 20,
     paddingVertical: 20,
     marginBottom: getPadding(20),
+    gap: getPadding(12),
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -422,19 +431,19 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: isWeb ? getFontSize(20) : 20,
     fontWeight: "bold",
-    color: "#333",
+    color: palette.text,
     marginBottom: 15,
   },
   projectTitle: {
     fontSize: isWeb ? getFontSize(28) : 24,
     fontWeight: "700",
-    color: "#1a1a1a",
+    color: palette.text,
     marginBottom: getPadding(8),
   },
   description: {
     fontSize: getFontSize(16),
     lineHeight: getFontSize(24),
-    color: "#555",
+    color: palette.textMuted,
   },
   detailsGrid: {
     gap: getPadding(16),
@@ -445,7 +454,7 @@ const styles = StyleSheet.create({
     gap: getPadding(12),
     paddingBottom: getPadding(16),
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: palette.border,
   },
   detailContent: {
     flex: 1,
@@ -453,12 +462,12 @@ const styles = StyleSheet.create({
   detailLabel: {
     fontSize: getFontSize(14),
     fontWeight: '600',
-    color: '#333',
+    color: palette.text,
     marginBottom: getPadding(4),
   },
   detailValue: {
     fontSize: getFontSize(14),
-    color: '#666',
+    color: palette.textMuted,
   },
   skillsContainer: {
     flexDirection: 'row',
@@ -467,38 +476,35 @@ const styles = StyleSheet.create({
     marginTop: getPadding(4),
   },
   skillTag: {
-    backgroundColor: '#f0f7ff',
-    borderRadius: 6,
+    backgroundColor: palette.surface,
+    borderRadius: radii.md,
     paddingHorizontal: getPadding(10),
     paddingVertical: getPadding(6),
+    borderWidth: 1,
+    borderColor: palette.border,
   },
   skillText: {
     fontSize: getFontSize(12),
-    color: '#7da0ca',
+    color: palette.primary,
     fontWeight: '500',
   },
   seeAllLink: {
     fontSize: getFontSize(14),
-    color: '#7da0ca',
+    color: palette.primary,
     fontWeight: '600',
   },
   studentCard: {
     width: 200,
-    backgroundColor: '#fff',
-    borderRadius: 12,
+    backgroundColor: palette.surfaceMuted,
+    borderRadius: radii.lg,
     padding: getPadding(16),
     marginRight: getPadding(12),
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    borderColor: palette.border,
   },
   studentScoreBadge: {
-    backgroundColor: '#7da0ca',
-    borderRadius: 6,
+    backgroundColor: palette.primarySoft,
+    borderRadius: radii.md,
     paddingVertical: getPadding(4),
     paddingHorizontal: getPadding(8),
     alignSelf: 'flex-start',
@@ -507,35 +513,37 @@ const styles = StyleSheet.create({
   studentScoreText: {
     fontSize: getFontSize(12),
     fontWeight: '700',
-    color: '#fff',
+    color: palette.primary,
   },
   studentName: {
     fontSize: getFontSize(14),
     fontWeight: '600',
-    color: '#1a1a1a',
+    color: palette.text,
     marginBottom: getPadding(4),
   },
   studentEmail: {
     fontSize: getFontSize(12),
-    color: '#666',
+    color: palette.textSubtle,
     marginBottom: getPadding(8),
   },
   studentStats: {
     paddingTop: getPadding(8),
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: palette.border,
   },
   studentStatText: {
     fontSize: getFontSize(12),
-    color: '#666',
+    color: palette.textSubtle,
   },
   applySection: {
     paddingHorizontal: isWeb ? 0 : 20,
     paddingVertical: 20,
-    backgroundColor: "#f8f9fa",
-    borderRadius: 12,
+    backgroundColor: palette.surfaceMuted,
+    borderRadius: radii.xl,
     marginTop: getPadding(20),
     gap: getPadding(12),
+    borderWidth: 1,
+    borderColor: palette.border,
   },
   applyButton: {
     width: '100%',

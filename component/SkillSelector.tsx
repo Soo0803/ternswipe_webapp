@@ -11,6 +11,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { isWeb } from '../utils/platform';
 import { getFontSize, getPadding, scale } from '../utils/responsive';
+import { palette, radii } from '../constants/theme';
 
 // Common skills based on algorithm taxonomy
 const COMMON_SKILLS = [
@@ -88,7 +89,7 @@ export default function SkillSelector({
                 onPress={() => removeSkill(skill)}
                 style={styles.removeButton}
               >
-                <Ionicons name="close-circle" size={16} color="#666" />
+                <Ionicons name="close-circle" size={16} color={palette.textSubtle} />
               </TouchableOpacity>
             </View>
           ))}
@@ -105,14 +106,14 @@ export default function SkillSelector({
           onSubmitEditing={handleSubmitEditing}
           onFocus={() => setShowSuggestions(searchText.length > 0)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-          placeholderTextColor="#999"
+          placeholderTextColor={palette.textSubtle}
         />
         {searchText.length > 0 && (
           <TouchableOpacity
             onPress={() => addSkill(searchText)}
             style={styles.addButton}
           >
-            <Ionicons name="add-circle" size={24} color="#4A90E2" />
+            <Ionicons name="add-circle" size={24} color={palette.primary} />
           </TouchableOpacity>
         )}
       </View>
@@ -145,32 +146,31 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     marginBottom: getPadding(16),
+    gap: getPadding(10),
   },
   label: {
     fontSize: getFontSize(14),
     fontWeight: '600',
-    marginBottom: getPadding(8),
-    color: '#333',
+    marginBottom: getPadding(4),
+    color: palette.text,
   },
   chipsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: getPadding(8),
+    marginBottom: getPadding(4),
     gap: 8,
   },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E3F2FD',
+    backgroundColor: palette.primarySoft,
     paddingHorizontal: getPadding(12),
     paddingVertical: getPadding(6),
-    borderRadius: 16,
-    marginRight: 8,
-    marginBottom: 8,
+    borderRadius: radii.pill,
   },
   chipText: {
     fontSize: getFontSize(12),
-    color: '#1976D2',
+    color: palette.primary,
     marginRight: 4,
   },
   removeButton: {
@@ -180,16 +180,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
+    borderColor: palette.border,
+    borderRadius: radii.md,
     paddingHorizontal: getPadding(12),
-    backgroundColor: '#f9f9f9',
+    backgroundColor: palette.surfaceMuted,
   },
   input: {
     flex: 1,
     fontSize: getFontSize(14),
     paddingVertical: getPadding(10),
-    color: '#333',
+    color: palette.text,
   },
   addButton: {
     padding: 4,
@@ -199,30 +199,26 @@ const styles = StyleSheet.create({
     top: '100%',
     left: 0,
     right: 0,
-    backgroundColor: '#fff',
+    backgroundColor: palette.surface,
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
+    borderColor: palette.border,
+    borderRadius: radii.md,
     marginTop: 4,
-    maxHeight: 200,
+    maxHeight: 220,
     zIndex: 1000,
     elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
   suggestionsList: {
-    maxHeight: 200,
+    maxHeight: 220,
   },
   suggestionItem: {
     padding: getPadding(12),
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: palette.border,
   },
   suggestionText: {
     fontSize: getFontSize(14),
-    color: '#333',
+    color: palette.text,
   },
 });
 

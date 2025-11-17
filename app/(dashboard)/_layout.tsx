@@ -1,81 +1,92 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-
-import HomeIcon from "../../assets/tab_bar_icons/home_icon.svg";
-import NotifIcon from "../../assets/tab_bar_icons/notification_icon.svg";
-import MessageIcon from "../../assets/tab_bar_icons/messages_icon.svg";
-import ProfileIcon from "../../assets/tab_bar_icons/profile_icon.svg";
-
-import Feather from '@expo/vector-icons/Feather'; // HOME ICON
-
+import Feather from '@expo/vector-icons/Feather';
+import { palette } from '../../constants/theme';
 
 export default function DashboardLayout() {
-    return (
-        <Tabs screenOptions = {{ 
-            headerShown: false,
-            tabBarActiveTintColor: "green",
-            tabBarItemStyle: {
-                justifyContent: 'center',
-                alignItems: 'center',
-            },
-            //tabBarShowLabel: false, 
-            }}>
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: palette.primary,
+        tabBarInactiveTintColor: palette.textSubtle,
+        tabBarShowLabel: true,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+        },
+        tabBarStyle: {
+          backgroundColor: palette.surface,
+          borderTopColor: palette.border,
+          paddingBottom: 6,
+          paddingTop: 6,
+          height: 68,
+        },
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Overview',
+          tabBarIcon: ({ focused, color }) => (
+            <Feather name="home" size={22} color={color} />
+          ),
+        }}
+      />
 
-            <Tabs.Screen 
-                name="index" 
-                options={{
-                    title: 'Home',
-                    tabBarIcon: ({ focused }) =>  (
-                        <Feather name="home" size={24} color = { focused? "green" : "gray" } />
-                        //<HomeIcon stroke={focused ? "green" : "gray"} />
-                    )
-                }} 
-            />
+      <Tabs.Screen
+        name="notification"
+        options={{
+          title: 'Alerts',
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="notifications-outline" size={22} color={color} />
+          ),
+        }}
+      />
 
-            <Tabs.Screen 
-                name="notification" 
-                options={{
-                    title: 'Notifications',
-                    tabBarIcon: ({ focused }) => (
-                        <Ionicons name="notifications-outline" size={24} color={ focused ? "green" : "gray" } />
-                        //<NotifIcon/>
-                    )
-                }}
-            />
+      <Tabs.Screen
+        name="messages"
+        options={{
+          title: 'Messages',
+          tabBarIcon: ({ color }) => (
+            <Feather name="message-circle" size={22} color={color} />
+          ),
+        }}
+      />
 
-            <Tabs.Screen 
-                name="messages" 
-                options={{ 
-                    title: 'Messages',
-                    tabBarIcon: ({ focused }) => (
-                        <Feather name="message-circle" size={24} color={focused ? "green" : "gray"}/>
-                        //<MessageIcon/>
-                    )
-                }}
-            />
-
-            <Tabs.Screen 
-                name="profile" 
-                options={{ 
-                    title: 'Profile',
-                    tabBarIcon: ({ focused }) => (
-                        <Ionicons name="person-outline" size={24} color={ focused ? "green" : "gray"}/>
-                        // <ProfileIcon/>
-                    )
-                }}
-            />
-            <Tabs.Screen 
-                name="matches" 
-                options={{ 
-                    href: null, // Hide from tab bar, accessible via navigation
-                }}
-            />
-            <Tabs.Screen 
-                name="project-matches" 
-                options={{ 
-                    href: null, // Hide from tab bar, accessible via navigation
-                }}
-            />
-        </Tabs>
-    );
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="person-outline" size={22} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="matches"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="project-matches"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="student"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="professor"
+        options={{
+          href: null,
+        }}
+      />
+    </Tabs>
+  );
 }

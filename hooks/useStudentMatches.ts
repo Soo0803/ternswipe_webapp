@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getApiUrl } from '../utils/apiConfig';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getStudentMatches } from '../services/supabaseData';
 
 interface MatchResult {
   project_id: number;
@@ -30,38 +29,24 @@ interface StudentMatchesResponse {
   count: number;
 }
 
-export function useStudentMatches(limit: number = 20) {
+export function useStudentMatches(limit: number = 20, options: { enabled?: boolean } = {}) {
   const [data, setData] = useState<MatchResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const enabled = options.enabled ?? true;
 
   useEffect(() => {
+    if (!enabled) {
+      setData([]);
+      setLoading(false);
+      return;
+    }
+
     async function fetchMatches() {
       try {
         setLoading(true);
-        const token = await AsyncStorage.getItem('auth_token');
-        if (!token) {
-          setError('Not authenticated');
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch(
-          `${getApiUrl('api/user/student/matches/')}?limit=${limit}`,
-          {
-            headers: {
-              'Authorization': `Token ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch matches: ${response.statusText}`);
-        }
-
-        const result: StudentMatchesResponse = await response.json();
-        setData(result.matches || []);
+        const matches = await getStudentMatches(limit);
+        setData(matches);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch matches');
@@ -72,7 +57,7 @@ export function useStudentMatches(limit: number = 20) {
     }
 
     fetchMatches();
-  }, [limit]);
+  }, [limit, enabled]);
 
   return { data, loading, error, refetch: () => {
     // Trigger refetch by updating limit slightly

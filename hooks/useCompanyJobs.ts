@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getApiUrl } from "../utils/apiConfig";
+import { getAllProfessorProfiles } from "../services/supabaseData";
 
 type ProfessorJob = {
   id: number;
@@ -28,11 +28,20 @@ export function useCompanyJobs() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(getApiUrl('api/user/professor/jobs/'));
-        if (!res.ok) {
-          throw new Error(`Failed to load: ${res.status}`);
-        }
-        const json = (await res.json()) as ProfessorJob[];
+        const profiles = await getAllProfessorProfiles();
+        const json = profiles.map((p, index) => ({
+          id: index + 1, // Temporary numeric ID for compatibility
+          user: index + 1,
+          professor_name: p.professor_name,
+          university: p.university,
+          description: p.description,
+          website: p.website,
+          profile_image: p.profile_image,
+          lab_first_image: p.lab_first_image,
+          lab_second_image: p.lab_second_image,
+          lab_third_image: p.lab_third_image,
+          position_description: p.position_description,
+        })) as ProfessorJob[];
         if (isMounted) setData(json);
       } catch (e: any) {
         if (isMounted) {

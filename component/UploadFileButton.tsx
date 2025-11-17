@@ -4,15 +4,20 @@ import * as DocumentPicker from 'expo-document-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { isWeb } from '../utils/platform';
 
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { palette, radii } from '../constants/theme';
 
-export default function UploadButton({ onFileSelected }: { onFileSelected?: (file: any) => void }) {
+interface UploadFileButtonProps {
+  onFileSelected?: (file: any) => void;
+  label?: string;
+}
+
+export default function UploadFileButton({ onFileSelected, label = 'Upload PDF' }: UploadFileButtonProps) {
   const [fileName, setFileName] = useState<string | null>(null);
 
   const handleFileUpload = async () => {
     try {
       if (isWeb) {
-        // Web implementation using file input
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = 'application/pdf';
@@ -21,12 +26,11 @@ export default function UploadButton({ onFileSelected }: { onFileSelected?: (fil
           if (target.files && target.files[0]) {
             const file = target.files[0];
             setFileName(file.name);
-            
+
             const reader = new FileReader();
             reader.onload = (event) => {
               const result = event.target?.result;
               if (result) {
-                // Convert to data URI for web
                 const dataUri = typeof result === 'string' ? result : URL.createObjectURL(file);
                 onFileSelected?.({
                   uri: dataUri,
@@ -37,15 +41,10 @@ export default function UploadButton({ onFileSelected }: { onFileSelected?: (fil
               }
             };
             reader.readAsDataURL(file);
-            
-            console.log("File Name:", file.name);
-            console.log("File MIME type:", file.type);
-            console.log("File Size:", file.size);
           }
         };
         input.click();
       } else {
-        // Mobile implementation
         const result = await DocumentPicker.getDocumentAsync({
           type: 'application/pdf',
           copyToCacheDirectory: true,
@@ -56,16 +55,11 @@ export default function UploadButton({ onFileSelected }: { onFileSelected?: (fil
           const file = result.assets[0];
           setFileName(file.name);
 
-          // ✅ Send file back to parent
           onFileSelected?.({
             uri: file.uri,
             name: file.name,
             type: file.mimeType || 'application/pdf',
           });
-
-          console.log("File URI:", file.uri);
-          console.log("File Name:", file.name);
-          console.log("File MIME type:", file.mimeType);
         }
       }
     } catch (err) {
@@ -76,8 +70,8 @@ export default function UploadButton({ onFileSelected }: { onFileSelected?: (fil
   return (
     <View style={styles.container}>
       <Pressable style={styles.uploadButton} onPress={handleFileUpload}>
-        <Ionicons name="cloud-upload-outline" size={20} color="#fff" />
-        <Text style={styles.uploadText}>Upload PDF</Text>
+        <Ionicons name="cloud-upload-outline" size={24} color={palette.primary} />
+        <Text style={styles.uploadText}>{label}</Text>
       </Pressable>
       {fileName && <Text style={styles.fileName}>Uploaded: {fileName}</Text>}
     </View>
@@ -86,35 +80,31 @@ export default function UploadButton({ onFileSelected }: { onFileSelected?: (fil
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    alignItems: 'center',
+    width: '100%',
+    alignItems: 'flex-start',
+    gap: 12,
   },
   uploadButton: {
-    height: hp(15),
-    width: wp(38),
+    width: '100%',
+    minHeight: hp(12),
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: "center",
-    backgroundColor: '#4A90E2',
+    backgroundColor: palette.surfaceMuted,
     paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 6,
-    elevation: 5,
+    paddingVertical: 16,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: palette.border,
+    gap: 8,
   },
   uploadText: {
-    color: '#fff',
-    fontSize: 16,
-    marginLeft: 8,
+    color: palette.text,
+    fontSize: 15,
     fontWeight: '600',
   },
   fileName: {
-    marginTop: 15,
-    fontSize: 14,
-    color: '#555',
-    fontStyle: 'italic',
+    fontSize: 13,
+    color: palette.textSubtle,
   },
 });

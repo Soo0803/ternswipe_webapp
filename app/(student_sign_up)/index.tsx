@@ -1,6 +1,7 @@
-import {  
+import React, { useState } from 'react';
+import {
   View,
-  Text, 
+  Text,
   StyleSheet,
   ScrollView,
   Platform,
@@ -9,225 +10,435 @@ import {
   Keyboard,
   StatusBar,
   Pressable,
+  Alert,
 } from 'react-native';
-
-import React from 'react';
-
-import { useRouter } from "expo-router";
+import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { TextInput } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { getFontSize, getPadding, getMaxWidth } from "../../utils/responsive";
-import { isWeb } from "../../utils/platform";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// import components and assets
-import AppLogo from "../../assets/app_icon/in_app_logo.svg";
-import ProgressBar from "../../component/ProgressBar";
-import ProfileImage from "../../component/ProfileImagePicker";
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { useStudentForm } from "../../context/studentFormContext";
 import { WebsiteLayout } from '../../components/WebsiteLayout';
-import { FormContainer } from '../../components/FormContainer';
 import { FormField } from '../../components/FormField';
 import { FormRow } from '../../components/FormRow';
 import { Button } from '../../components/Button';
+import ProfileImage from '../../component/ProfileImagePicker';
+import UploadFileButton from '../../component/UploadFileButton';
+import SkillSelector from '../../component/SkillSelector';
+import CourseInput from '../../component/CourseInput';
+import { useStudentForm } from '../../context/studentFormContext';
+import { signUpStudent } from '../../services/supabaseAuth';
+import { getFontSize, getPadding } from '../../utils/responsive';
+import { palette, radii, shadows } from '../../constants/theme';
+import { isWeb } from '../../utils/platform';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function index () {
+export default function StudentSignUp() {
   const router = useRouter();
-
-  // State hooks to store user input
   const { formData, setFormData } = useStudentForm();
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = () => {
-    router.push("/(student_sign_up)/page_2");
+  const handleSubmit = async () => {
+    if (!formData.username || !formData.email || !formData.password || !formData.given_name || !formData.last_name) {
+      Alert.alert('Missing fields', 'Please complete all required fields.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      const { user, session } = await signUpStudent({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        profileData: {
+          given_name: formData.given_name,
+          middle_name: formData.middle_name,
+          last_name: formData.last_name,
+          nationality: formData.nationality,
+          age: formData.age,
+          language: formData.language,
+          graduation_year: formData.graduation_year,
+          major_chosen: formData.major_chosen,
+          location: formData.location,
+          phone_number: formData.phone_number,
+          headline: formData.headline,
+          summary: formData.summary,
+          courses: formData.courses || [],
+          skills: formData.skills || [],
+          skills_text: formData.skills_text,
+          gpa: formData.gpa,
+          hrs_per_week: formData.hrs_per_week,
+          avail_start: formData.avail_start,
+          avail_end: formData.avail_end,
+          reliability: formData.reliability,
+          transcript: formData.transcript,
+          resume: formData.resume,
+          profile_image: formData.profile_image,
+        },
+      });
+
+      await AsyncStorage.multiSet([
+        ['auth_token', session.access_token],
+        ['auth_user', JSON.stringify(user)],
+      ]);
+
+      router.replace('/(dashboard)');
+    } catch (error: any) {
+      console.error('Submission error:', error);
+      Alert.alert('Submission failed', error.message || 'Please check your input and try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <WebsiteLayout showHeader={isWeb}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={hp(3)}
-          style={{ flex: 1, width: '100%' }}
-        >
-          {!isWeb && (
-            <SafeAreaView>
-              <StatusBar barStyle="dark-content"/>
-            </SafeAreaView>
-          )}
-          
-          <View style={styles.content}>
-            <View style={styles.header}>
-              {!isWeb && <AppLogo width={65} height={65}/>}
-              <ProgressBar process={0.25}/>
-              <Text style={styles.sectionTitle}>Student Registration</Text>
-              <Text style={styles.sectionSubtitle}>Step 1 of 4: Personal Information</Text>
-            </View>
+  const formContent = (
+    <ScrollView
+      contentContainerStyle={styles.formScrollContent}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View style={styles.profileSection}>
+        <ProfileImage
+          onImageSelected={(file) => setFormData({ ...formData, profile_image: file })}
+        />
+      </View>
 
-            <FormContainer>
+      <Text style={styles.sectionTitle}>Personal Information</Text>
+      <FormRow>
+        <FormField
+          label="Given Name"
+          placeholder="First name"
+          value={formData.given_name}
+          onChangeText={(text) => setFormData({ ...formData, given_name: text })}
+          required
+        />
+        <FormField
+          label="Last Name"
+          placeholder="Last name"
+          value={formData.last_name}
+          onChangeText={(text) => setFormData({ ...formData, last_name: text })}
+          required
+        />
+      </FormRow>
 
-                <View style={styles.profileSection}>
-                  <ProfileImage/>
-                </View>
+      <FormRow>
+        <FormField
+          label="Middle Name"
+          placeholder="Optional"
+          value={formData.middle_name}
+          onChangeText={(text) => setFormData({ ...formData, middle_name: text })}
+        />
+        <FormField
+          label="Age"
+          placeholder="Age"
+          value={formData.age}
+          onChangeText={(text) => setFormData({ ...formData, age: text })}
+          keyboardType="numeric"
+        />
+      </FormRow>
 
-                <View style={styles.formSection}>
-                  <Text style={styles.sectionLabel}>Basic Information</Text>
-                  <FormRow>
-                    <FormField
-                      label="Given Name"
-                      placeholder="Enter your given name"
-                      value={formData.given_name}
-                      onChangeText={(text) => setFormData({...formData, given_name: text})}
-                      required
-                    />
-                    <FormField
-                      label="Last Name"
-                      placeholder="Enter your last name"
-                      value={formData.last_name}
-                      onChangeText={(text) => setFormData({...formData, last_name: text})}
-                      required
-                    />
-                  </FormRow>
+      <FormRow>
+        <FormField
+          label="Nationality"
+          placeholder="Nationality"
+          value={formData.nationality}
+          onChangeText={(text) => setFormData({ ...formData, nationality: text })}
+        />
+        <FormField
+          label="Languages"
+          placeholder="Languages"
+          value={formData.language}
+          onChangeText={(text) => setFormData({ ...formData, language: text })}
+        />
+      </FormRow>
 
-                  <FormRow>
-                    <FormField
-                      label="Middle Name"
-                      placeholder="(Optional)"
-                      value={formData.middle_name}
-                      onChangeText={(text) => setFormData({...formData, middle_name: text})}
-                    />
-                    <FormField
-                      label="Age"
-                      placeholder="Your age"
-                      value={formData.age}
-                      onChangeText={(text) => setFormData({...formData, age: text})}
-                      keyboardType="numeric"
-                      required
-                    />
-                  </FormRow>
+      <Text style={styles.sectionTitle}>Education</Text>
+      <FormRow>
+        <FormField
+          label="Graduation Year"
+          placeholder="Year"
+          value={formData.graduation_year}
+          onChangeText={(text) => setFormData({ ...formData, graduation_year: text })}
+          keyboardType="numeric"
+        />
+        <FormField
+          label="Major"
+          placeholder="Major"
+          value={formData.major_chosen}
+          onChangeText={(text) => setFormData({ ...formData, major_chosen: text })}
+        />
+      </FormRow>
 
-                  <FormRow>
-                    <FormField
-                      label="Nationality"
-                      placeholder="Your nationality"
-                      value={formData.nationality}
-                      onChangeText={(text) => setFormData({...formData, nationality: text})}
-                      required
-                    />
-                    <FormField
-                      label="Languages"
-                      placeholder="Languages you speak"
-                      value={formData.language}
-                      onChangeText={(text) => setFormData({...formData, language: text})}
-                      required
-                    />
-                  </FormRow>
+      <Text style={styles.sectionTitle}>Contact</Text>
+      <FormField
+        label="Location"
+        placeholder="Preferred location"
+        value={formData.location}
+        onChangeText={(text) => setFormData({ ...formData, location: text })}
+        fullWidth
+      />
+      <FormField
+        label="Phone Number"
+        placeholder="Phone number"
+        value={formData.phone_number}
+        onChangeText={(text) => setFormData({ ...formData, phone_number: text })}
+        keyboardType="phone-pad"
+        fullWidth
+      />
 
-                  <View style={styles.educationSection}>
-                    <Text style={styles.sectionLabel}>Education</Text>
-                    <FormRow>
-                      <FormField
-                        label="Graduation Year"
-                        placeholder="Expected graduation year"
-                        value={formData.graduation_year}
-                        onChangeText={(text) => setFormData({...formData, graduation_year: text})}
-                        keyboardType="numeric"
-                        required
-                      />
-                      <FormField
-                        label="Major"
-                        placeholder="Your major"
-                        value={formData.major_chosen}
-                        onChangeText={(text) => setFormData({...formData, major_chosen: text})}
-                        required
-                      />
-                    </FormRow>
-                  </View>
-                </View>
+      <Text style={styles.sectionTitle}>Documents</Text>
+      <View style={styles.uploadRow}>
+        <Text style={styles.uploadLabel}>Transcript</Text>
+        <UploadFileButton
+          onFileSelected={(file) => setFormData({ ...formData, transcript: file })}
+          label={formData.transcript ? 'Replace' : 'Upload'}
+        />
+      </View>
+      <View style={styles.uploadRow}>
+        <Text style={styles.uploadLabel}>Resume</Text>
+        <UploadFileButton
+          onFileSelected={(file) => setFormData({ ...formData, resume: file })}
+          label={formData.resume ? 'Replace' : 'Upload'}
+        />
+      </View>
 
-                <View style={styles.buttonContainer}>
-                  <Button
-                    title="Back"
-                    onPress={() => router.push("/log_in_page")}
-                    variant="outline"
-                    style={styles.backButton}
-                  />
-                  <Button
-                    title="Continue"
-                    onPress={() => {
-                      handleSubmit();
-                      router.push("/(student_sign_up)/page_2");
-                    }}
-                    style={styles.nextButton}
-                  />
-                </View>
-            </FormContainer>
+      <Text style={styles.sectionTitle}>Professional Profile</Text>
+      <FormField
+        label="Headline"
+        placeholder="Brief professional headline"
+        value={formData.headline}
+        onChangeText={(text) => setFormData({ ...formData, headline: text })}
+        fullWidth
+      />
+      <FormField
+        label="Summary"
+        placeholder="Describe your background and goals"
+        multiline
+        numberOfLines={4}
+        value={formData.summary}
+        onChangeText={(text) => setFormData({ ...formData, summary: text })}
+        fullWidth
+        style={styles.textArea}
+      />
+      <SkillSelector
+        selectedSkills={formData.skills}
+        onSkillsChange={(skills) => setFormData({ ...formData, skills })}
+        label="Skills"
+      />
+      <CourseInput
+        courses={formData.courses}
+        onCoursesChange={(courses) => setFormData({ ...formData, courses })}
+        label="Relevant Courses"
+      />
+      <FormRow>
+        <FormField
+          label="GPA"
+          placeholder="GPA"
+          keyboardType="decimal-pad"
+          value={formData.gpa}
+          onChangeText={(text) => setFormData({ ...formData, gpa: text })}
+        />
+        <FormField
+          label="Hours/Week"
+          placeholder="Hours"
+          keyboardType="numeric"
+          value={formData.hrs_per_week}
+          onChangeText={(text) => setFormData({ ...formData, hrs_per_week: text })}
+        />
+      </FormRow>
+      <FormRow>
+        <FormField
+          label="Start Date"
+          placeholder="YYYY-MM-DD"
+          value={formData.avail_start}
+          onChangeText={(text) => setFormData({ ...formData, avail_start: text })}
+        />
+        <FormField
+          label="End Date"
+          placeholder="YYYY-MM-DD"
+          value={formData.avail_end}
+          onChangeText={(text) => setFormData({ ...formData, avail_end: text })}
+        />
+      </FormRow>
+
+      <Text style={styles.sectionTitle}>Account Credentials</Text>
+      <FormField
+        label="Username"
+        placeholder="Choose a username"
+        value={formData.username}
+        onChangeText={(text) => setFormData({ ...formData, username: text })}
+        required
+        fullWidth
+      />
+      <FormField
+        label="Email"
+        placeholder="Your email"
+        keyboardType="email-address"
+        value={formData.email}
+        onChangeText={(text) => setFormData({ ...formData, email: text })}
+        required
+        fullWidth
+      />
+      <View style={styles.passwordContainer}>
+        <FormField
+          label="Password"
+          placeholder="Create a password"
+          value={formData.password}
+          onChangeText={(text) => setFormData({ ...formData, password: text })}
+          secureTextEntry={!passwordVisible}
+          required
+          fullWidth
+          containerStyle={styles.passwordField}
+        />
+        <Pressable onPress={() => setPasswordVisible(!passwordVisible)} style={styles.eyeIcon}>
+          <Ionicons
+            name={passwordVisible ? 'eye-off' : 'eye'}
+            size={22}
+            color={palette.textSubtle}
+          />
+        </Pressable>
+      </View>
+
+      <View style={styles.buttonGroup}>
+        <Button
+          title="Back to sign in"
+          variant="outline"
+          onPress={() => router.push('/log_in_page')}
+          style={styles.backButton}
+        />
+        <Button
+          title={submitting ? 'Creating account...' : 'Create account'}
+          onPress={handleSubmit}
+          style={styles.submitButton}
+          disabled={submitting}
+        />
+      </View>
+    </ScrollView>
+  );
+
+  const webView = (
+    <View style={styles.page}>
+      <View style={styles.content}>
+        <Text style={styles.title}>Student Registration</Text>
+        {formContent}
+      </View>
+    </View>
+  );
+
+  const mobileView = (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.mobileFlex}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={styles.mobileSafe}>
+          <StatusBar barStyle="dark-content" />
+          <View style={styles.mobileHeader}>
+            <Text style={styles.mobileTitle}>Student Registration</Text>
           </View>
-        </KeyboardAvoidingView>
-      </WebsiteLayout>
-    </TouchableWithoutFeedback>
+          {formContent}
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
+  );
+
+  return (
+    <WebsiteLayout showHeader={isWeb}>
+      {isWeb ? webView : mobileView}
+    </WebsiteLayout>
   );
 }
 
 const styles = StyleSheet.create({
+  page: {
+    width: '100%',
+    ...(isWeb ? { minHeight: '100vh' as any } : { flex: 1 }),
+    paddingVertical: isWeb ? getPadding(48) : getPadding(20),
+    paddingHorizontal: isWeb ? getPadding(80) : getPadding(24),
+  },
   content: {
     width: '100%',
-    maxWidth: 900,
+    maxWidth: 1200,
     marginHorizontal: 'auto',
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: getPadding(32),
-    width: '100%',
-    paddingTop: isWeb ? 0 : getPadding(20),
-  },
-  sectionTitle: {
-    fontSize: getFontSize(28),
+  title: {
+    fontSize: getFontSize(42),
     fontWeight: '700',
-    color: '#1a1a1a',
-    marginTop: getPadding(24),
-    marginBottom: getPadding(8),
+    color: palette.text,
     fontFamily: 'Inter-Regular',
-    textAlign: 'center',
+    marginBottom: getPadding(40),
   },
-  sectionSubtitle: {
-    fontSize: getFontSize(14),
-    color: '#666',
-    fontFamily: 'Inter-Regular',
-    textAlign: 'center',
+  formScrollContent: {
+    paddingBottom: getPadding(12),
+    gap: getPadding(20),
   },
   profileSection: {
     alignItems: 'center',
-    marginBottom: getPadding(32),
+    marginBottom: getPadding(8),
   },
-  formSection: {
-    width: '100%',
-  },
-  sectionLabel: {
-    fontSize: getFontSize(18),
+  sectionTitle: {
+    fontSize: getFontSize(24),
     fontWeight: '600',
-    color: '#7da0ca',
+    color: palette.primary,
+    marginTop: getPadding(24),
     marginBottom: getPadding(16),
-    marginTop: getPadding(8),
     fontFamily: 'Inter-Regular',
   },
-  educationSection: {
-    marginTop: getPadding(24),
-    paddingTop: getPadding(24),
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+  uploadRow: {
+    marginBottom: getPadding(16),
   },
-  buttonContainer: {
+  uploadLabel: {
+    fontSize: getFontSize(18),
+    fontWeight: '600',
+    color: palette.text,
+    marginBottom: getPadding(12),
+    fontFamily: 'Inter-Regular',
+  },
+  textArea: {
+    minHeight: 100,
+    textAlignVertical: 'top',
+  },
+  passwordContainer: {
+    position: 'relative',
+    width: '100%',
+  },
+  passwordField: {
+    width: '100%',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: getPadding(16),
+    top: getPadding(36),
+    zIndex: 10,
+  },
+  buttonGroup: {
     flexDirection: isWeb ? 'row' : 'column',
-    justifyContent: 'space-between',
-    marginTop: getPadding(32),
     gap: getPadding(12),
+    marginTop: getPadding(24),
   },
   backButton: {
     flex: isWeb ? 1 : undefined,
-    marginBottom: isWeb ? 0 : getPadding(12),
   },
-  nextButton: {
+  submitButton: {
     flex: isWeb ? 1 : undefined,
+  },
+  mobileFlex: {
+    flex: 1,
+  },
+  mobileSafe: {
+    flex: 1,
+    backgroundColor: palette.background,
+  },
+  mobileHeader: {
+    alignItems: 'center',
+    paddingTop: getPadding(20),
+    paddingBottom: getPadding(16),
+    gap: getPadding(12),
+  },
+  mobileTitle: {
+    fontSize: getFontSize(32),
+    fontWeight: '700',
+    color: palette.text,
+    textAlign: 'center',
   },
 });

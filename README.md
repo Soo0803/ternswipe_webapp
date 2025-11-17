@@ -1,1 +1,0 @@
-# Ternswipe_expo

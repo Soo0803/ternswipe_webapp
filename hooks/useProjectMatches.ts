@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getApiUrl } from '../utils/apiConfig';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getProjectMatches } from '../services/supabaseData';
 
 interface StudentMatch {
   student_id: number;
@@ -30,7 +29,7 @@ interface ProjectMatchesResponse {
   count: number;
 }
 
-export function useProjectMatches(projectId: number, limit: number = 20) {
+export function useProjectMatches(projectId: string | number, limit: number = 20) {
   const [data, setData] = useState<StudentMatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,29 +43,8 @@ export function useProjectMatches(projectId: number, limit: number = 20) {
 
       try {
         setLoading(true);
-        const token = await AsyncStorage.getItem('auth_token');
-        if (!token) {
-          setError('Not authenticated');
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch(
-          `${getApiUrl(`api/user/project/${projectId}/matches/`)}?limit=${limit}`,
-          {
-            headers: {
-              'Authorization': `Token ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch matches: ${response.statusText}`);
-        }
-
-        const result: ProjectMatchesResponse = await response.json();
-        setData(result.matches || []);
+        const matches = await getProjectMatches(String(projectId), limit);
+        setData(matches as StudentMatch[]);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch matches');

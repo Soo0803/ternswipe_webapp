@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInputProps as RNTextInputProps } from 'reac
 import { TextInput } from 'react-native-gesture-handler';
 import { isWeb } from '../utils/platform';
 import { getFontSize, getPadding } from '../utils/responsive';
+import { palette, radii } from '../constants/theme';
 
 interface FormFieldProps extends RNTextInputProps {
   label: string;
@@ -20,6 +21,8 @@ export const FormField: React.FC<FormFieldProps> = ({
   containerStyle,
   ...textInputProps
 }) => {
+  const { style: inputStyleProp, multiline, ...restInputProps } = textInputProps as any;
+
   const fieldContainerStyle = [
     styles.fieldContainer,
     fullWidth && styles.fullWidth,
@@ -35,11 +38,14 @@ export const FormField: React.FC<FormFieldProps> = ({
       <TextInput
         style={[
           styles.input,
+          multiline && styles.inputMultiline,
           error && styles.inputError,
           isWeb && styles.inputWeb,
+          inputStyleProp,
         ]}
-        placeholderTextColor="#999"
-        {...textInputProps}
+        multiline={multiline}
+        placeholderTextColor={palette.textSubtle}
+        {...restInputProps}
       />
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
@@ -55,35 +61,41 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   label: {
-    fontSize: getFontSize(14),
+    fontSize: getFontSize(18),
     fontWeight: '600',
-    color: '#333',
-    marginBottom: getPadding(8),
+    color: palette.text,
+    marginBottom: getPadding(10),
     fontFamily: 'Inter-Regular',
   },
   required: {
-    color: '#e74c3c',
+    color: palette.danger,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: getPadding(16),
-    paddingVertical: getPadding(12),
-    fontSize: getFontSize(14),
-    backgroundColor: '#f9f9f9',
+    borderColor: palette.border,
+    borderRadius: radii.md,
+    paddingHorizontal: getPadding(18),
+    paddingVertical: getPadding(14),
+    fontSize: getFontSize(16),
+    backgroundColor: palette.surfaceMuted,
     fontFamily: 'Inter-Regular',
-    color: '#333',
-    minHeight: isWeb ? 44 : 48,
+    color: palette.text,
+    minHeight: isWeb ? 52 : 56,
+  },
+  inputMultiline: {
+    minHeight: 120,
+    paddingTop: getPadding(12),
+    textAlignVertical: 'top',
   },
   inputWeb: {
-    fontSize: getFontSize(16), // Prevent zoom on iOS
+    fontSize: getFontSize(18), // Prevent zoom on iOS
   },
   inputError: {
-    borderColor: '#e74c3c',
+    borderColor: palette.danger,
+    backgroundColor: palette.dangerSoft,
   },
   errorText: {
-    color: '#e74c3c',
+    color: palette.danger,
     fontSize: getFontSize(12),
     marginTop: getPadding(4),
     fontFamily: 'Inter-Regular',
